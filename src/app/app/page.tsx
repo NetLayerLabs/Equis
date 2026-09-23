@@ -1,3 +1,4 @@
+import { ActionsPanel } from "@/components/app/actions/ActionsPanel";
 import { AppShell } from "@/components/AppShell";
 import { ChainStats } from "@/components/ChainStats";
 import { PoolPanel } from "@/components/PoolPanel";
@@ -10,8 +11,9 @@ export default function OverviewPage() {
         <ChainStats />
         <div className="grid gap-6 lg:grid-cols-2">
           <PositionPanel />
-          <PoolPanel />
+          <ActionsPanel />
         </div>
+        <PoolPanel />
       </div>
     </AppShell>
   );
