@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: theme("colors.ink");
+    color: theme("colors.text");
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background: rgb(201 162 39 / 0.3);
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.brass");
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* The landing page's measure: one knob for content width and side gutters. */
+  .shell {
+    @apply mx-auto w-full max-w-[82rem] px-4 sm:px-7;
+  }
+}
+
+@layer components {
+  /* The header bar sits half as far from the edges as the body content, at any width. */
+  .shell-nav {
+    @apply mx-auto w-full;
+    padding-inline: calc(max(0px, 100vw - 82rem) / 4 + 0.875rem);
+  }
+}
+
+@layer utilities {
+  /* Engraved hairlines, as on the border of a share certificate. */
+  .engrave {
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgb(201 162 39 / 0.09) 0px,
+      rgb(201 162 39 / 0.09) 1px,
+      transparent 1px,
+      transparent 7px
+    );
+  }
+
+  /* The ledger grid behind the dealing-desk sections. */
+  .ledger-grid {
+    background-image: linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
