@@ -1,0 +1,22 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.37"
+# X Layer (mainnet 196 + testnet 1952) runs Prague, NOT Osaka — CLZ is rejected on-chain
+# (probed 2026-09-15). Pin this so newer solc defaults can't emit opcodes the chain rejects.
+# Prague also gives us EIP-7702 cheatcodes (vm.signDelegation / vm.attachDelegation) in tests.
+evm_version = "prague"
+optimizer = true
+optimizer_runs = 200
+# Fork tests read real Chainlink Data Streams reports saved by scripts/fetch-stream-reports.ts.
+fs_permissions = [{ access = "read", path = "./test/fixtures" }]
+remappings = [
+  "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+  "forge-std/=lib/forge-std/src/",
+]
+
+[rpc_endpoints]
+xlayer = "https://rpc.xlayer.tech"
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
