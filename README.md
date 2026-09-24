@@ -192,6 +192,30 @@ forge script script/DeployEquis.s.sol --rpc-url xlayer --account <your-keystore>
 Deployment costs about 0.0005 OKB. Owner, guardian and treasury default to the deployer; set `EQUIS_OWNER`
 to a multisig for anything holding real money.
 
+## Deploying the dashboard
+
+The app is a stock Next.js 14 project and deploys to Vercel with no configuration: import the repository,
+keep the defaults, deploy. `npm run build` must pass locally first - it is the same build.
+
+Set one environment variable in production:
+
+| Variable | Why |
+| --- | --- |
+| `NEXT_PUBLIC_X_LAYER_RPC_URL` | X Layer's public RPC rate-limits datacenter IPs, which is what a Vercel function reads from. Point this at your own endpoint. |
+| `X_LAYER_RPC_URL` | Optional. A server-only endpoint for reads that never reaches the browser bundle, so a keyed RPC stays private. |
+
+Nothing else is required. The contract addresses default to the live deployment, and RedStone's gateway
+needs no credential, so a deploy with zero variables set still works - it just shares the public RPC.
+
+**What is cached, and what deliberately is not.** The landing page revalidates its chain readings every 60
+seconds. `/api/prices` is cached 20 seconds at the CDN. `/api/reports` is never cached: it returns a signed
+RedStone payload that expires three minutes after signing, and serving a stale one would produce a borrow
+that reverts onchain.
+
+The Telegram bot is not part of this deployment. It is a long-running poller, not a serverless function, so
+it belongs on a VPS - see `deploy/`. Set `EQUIS_APP_URL` to the deployed dashboard URL and the bot adds a
+button that opens it as a Telegram Mini App.
+
 ## Testing
 
 35 tests pass against forked mainnet state, covering the pool's interest accrual and share accounting,

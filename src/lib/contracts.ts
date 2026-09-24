@@ -1,7 +1,12 @@
 import type { Address } from "viem";
 
 export const X_LAYER_CHAIN_ID = 196;
-export const X_LAYER_RPC_URL = "https://rpc.xlayer.tech";
+/**
+ * X Layer's public RPC by default. Set NEXT_PUBLIC_X_LAYER_RPC_URL to use your own: the public endpoint
+ * rate-limits datacenter IPs, which is what a Vercel deployment reads from. Server-side callers may also
+ * set X_LAYER_RPC_URL (no NEXT_PUBLIC_ prefix) to keep a keyed endpoint out of the browser bundle.
+ */
+export const X_LAYER_RPC_URL = process.env.NEXT_PUBLIC_X_LAYER_RPC_URL ?? "https://rpc.xlayer.tech";
 /** OKX's own explorer for X Layer. */
 export const OKX_EXPLORER_URL = "https://web3.okx.com/explorer/x-layer";
 export const OKX_ADDRESS_URL = `${OKX_EXPLORER_URL}/evm/address/`;

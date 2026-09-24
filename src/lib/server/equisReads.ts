@@ -11,7 +11,10 @@ import { XSTOCKS } from "../xstocks.ts";
  * Chain reads shared by every server-side surface: the web app, the Telegram bot and any keeper.
  * One definition of what a position is, so the bot and the dashboard can never disagree.
  */
-export const client = createPublicClient({ chain: xLayer, transport: http(X_LAYER_RPC_URL) });
+/** A server-only endpoint wins over the public one, so a keyed RPC never reaches the browser bundle. */
+export const SERVER_RPC_URL = process.env.X_LAYER_RPC_URL ?? X_LAYER_RPC_URL;
+
+export const client = createPublicClient({ chain: xLayer, transport: http(SERVER_RPC_URL) });
 
 const WAD = 10n ** 18n;
 const GATEWAY = `https://oracle-gateway-1.a.redstone.finance/data-packages/latest/${REDSTONE_DATA_SERVICE_ID}`;
