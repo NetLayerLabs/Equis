@@ -63,6 +63,10 @@ const round = (n) => Math.round(n * 100) / 100
  * always be cut before every clip exists.
  */
 const HAND_RECORDED = {
+  explorer: 'QuickTime screen recording of the OKX explorer page for the borrow transaction, scrolled to ' +
+    'the input data. This one WAS automated until the explorer started redirecting the automated browser ' +
+    'to web3.okx.com/account/login - the resulting clip was a 404 page. A normal signed-in browser serves ' +
+    'it fine, so record it by hand. `node scripts/capture.mjs explorer` still exists if you want to retry.',
   dashboard: 'QuickTime screen recording of /app with a wallet connected, showing the open position ' +
     '(wNVDAx collateral, 4 USD₮0 of debt, health factor 1.81). Playwright cannot connect a wallet.',
   earn: 'QuickTime screen recording of /app/earn with a wallet connected, showing the pool at 33% utilisation.',
@@ -771,6 +775,10 @@ const BEATS = {
 }
 
 /** Which beats are allowed to fail without failing the run. */
+/*
+ * Beats that may fail without failing the run. `explorer` is no longer in ALL - see HAND_RECORDED -
+ * but it stays here so an explicit `capture.mjs explorer` retry degrades politely rather than throwing.
+ */
 const OPTIONAL = new Set(['explorer'])
 
 // ---------------------------------------------------------------------------------------------
@@ -804,7 +812,8 @@ if (args.length === 0 || args[0] === 'list') {
     cut(session, dir)
   }
 } else {
-  const wanted = args[0] === 'all' ? Object.keys(BEATS) : args
+  // `all` skips anything listed as hand-recorded, so it cannot re-shoot the explorer's login redirect.
+  const wanted = args[0] === 'all' ? Object.keys(BEATS).filter((b) => !(b in HAND_RECORDED)) : args
   for (const beat of wanted) {
     if (!BEATS[beat]) {
       if (HAND_RECORDED[beat]) throw new Error(`"${beat}" is hand-recorded, not captured: ${HAND_RECORDED[beat]}`)

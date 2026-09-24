@@ -23,27 +23,32 @@ That writes `public/vo/v00.mp3` … `v09.mp3` and measures them into `public/vo/
 what drives every scene's length. The script in `vo-gen.js` is the single source of truth for what is
 said; edit it there and re-run.
 
-**2. Footage that can be automated.** Five beats film themselves against the live deployment:
+**2. Footage that can be automated.** Four beats film themselves against the live deployment:
 
 ```bash
 npm run capture         # all of them
-node scripts/capture.mjs explorer   # re-shoot one
+node scripts/capture.mjs markets    # re-shoot one
 ```
 
-`landing`, `surfaces`, `markets` and `agent` come from tryequis.vercel.app; `explorer` is the OKX page
-for the real borrow transaction. The explorer is a third-party page, so that one is allowed to fail
-without killing the run.
+`landing`, `surfaces`, `markets` and `agent` come from tryequis.vercel.app, at 1600x900 with a device
+scale factor of 2, so the frames are 3200x1800 and the film can push in without upscaling.
 
 **3. Footage that cannot.** Four beats need a human:
 
 | Clip | Why |
 | --- | --- |
+| `explorer.mp4` | The OKX explorer redirects an automated browser to `web3.okx.com/account/login`, so the automated take came back a 404 page. A normal signed-in browser serves it fine. |
 | `dashboard.mp4` | `/app` needs a connected wallet holding the position. Playwright cannot sign. |
 | `earn.mp4` | `/app/earn` likewise, to show the pool at 33% utilisation. |
 | `mcp.mp4` | A terminal running the MCP server and returning `equis_build_transaction`. |
 | `tests.mp4` | A terminal running `forge test`: 35 passing. |
 
-Record each at 1600x900, save to `public/clips/<name>.mp4`, then `npm run clips` to measure them.
+For `explorer.mp4`, open
+[the borrow transaction](https://web3.okx.com/explorer/x-layer/evm/tx/0xb896faa0e4965cb5bf4d970b5f7ced9f5eccc6a5ad9083b31bc7c7d662c0b5ee)
+and scroll to the input data, so the 1,700 bytes of calldata sit on screen. It carries the cold open and
+the hero beat, so it is the one worth shooting carefully.
+
+Record each at 1600x900 or larger, save to `public/clips/<name>.mp4`, then `npm run clips` to measure them.
 **Connect the wallet before you hit record** - a fresh browser shows "No wallet detected" and zeroes.
 
 **4. Render.**

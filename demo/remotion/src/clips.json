@@ -1,1 +1,27 @@
-{}
+{
+ "agent": {
+  "duration": 20.87,
+  "width": 3200,
+  "height": 1800
+ },
+ "explorer": {
+  "duration": 23.97,
+  "width": 3200,
+  "height": 1800
+ },
+ "landing": {
+  "duration": 20.8,
+  "width": 3200,
+  "height": 1800
+ },
+ "markets": {
+  "duration": 19.03,
+  "width": 3200,
+  "height": 1800
+ },
+ "surfaces": {
+  "duration": 26.2,
+  "width": 3200,
+  "height": 1800
+ }
+}
