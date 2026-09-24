@@ -38,6 +38,9 @@ const config: Config = {
       animation: {
         rise: "rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both",
         "pulse-dot": "pulse-dot 1.8s ease-in-out infinite",
+        // Continuous, unhurried motion for the hero figures.
+        float: "float 9s ease-in-out infinite",
+        "spin-slow": "spin-slow 120s linear infinite",
       },
       keyframes: {
         rise: {
@@ -47,6 +50,14 @@ const config: Config = {
         "pulse-dot": {
           "0%,100%": { opacity: "1", transform: "scale(1)" },
           "50%": { opacity: "0.4", transform: "scale(0.82)" },
+        },
+        float: {
+          "0%,100%": { transform: "translate3d(0, 0, 0)" },
+          "50%": { transform: "translate3d(0, -10px, 0)" },
+        },
+        "spin-slow": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
         },
       },
     },

@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { ExhibitCaption, Eyebrow } from "@/components/brand/Motif";
 import { buttonClass } from "@/components/ui";
@@ -12,6 +12,38 @@ const ASSURANCES = [
   "Prices verified onchain, not quoted by us",
   "Agent keys are scoped, capped and expiring",
 ];
+
+/**
+ * Tilt, entrance and drift each get their own element so their transforms compose rather than overwrite.
+ * The periods are coprime-ish and the phases negative, so the cards never drift in lockstep and the motion
+ * reads as continuous rather than as a pulse. Reduced-motion users get none of it (see globals.css).
+ */
+function Drift({
+  tilt,
+  rise,
+  duration,
+  phase,
+  children,
+}: {
+  tilt: string;
+  rise: number;
+  duration: number;
+  phase: number;
+  children: ReactNode;
+}) {
+  return (
+    <div className={tilt}>
+      <div className="animate-rise" style={{ animationDelay: `${rise}s` }}>
+        <div
+          className="animate-float will-change-transform"
+          style={{ animationDuration: `${duration}s`, animationDelay: `${phase}s` }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Hero({ facts }: { facts: ChainFacts | null }) {
   const nvidia = facts?.wrappers.find((w) => w.symbol === "wNVDAx");
@@ -66,10 +98,16 @@ export function Hero({ facts }: { facts: ChainFacts | null }) {
             className="absolute -inset-x-3 bottom-12 top-6 -z-10 rounded-[1.75rem] border border-line bg-panel/40 sm:-inset-x-5"
           />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] sm:gap-5">
-            <CertificateFragment fact={nvidia} className="animate-rise sm:self-start sm:-rotate-1" style={delay(0.08)} />
+            <Drift tilt="sm:self-start sm:-rotate-1" rise={0.08} duration={9} phase={0}>
+              <CertificateFragment fact={nvidia} />
+            </Drift>
             <div className="flex flex-col gap-4 sm:gap-5 sm:pt-8">
-              <CreditFragment usdt0Usd={facts?.usdt0Usd} className="animate-rise sm:rotate-1" style={delay(0.3)} />
-              <GuardFragment className="animate-rise sm:-rotate-1" style={delay(0.45)} />
+              <Drift tilt="sm:rotate-1" rise={0.3} duration={11} phase={-3.5}>
+                <CreditFragment usdt0Usd={facts?.usdt0Usd} />
+              </Drift>
+              <Drift tilt="sm:-rotate-1" rise={0.45} duration={13} phase={-7}>
+                <GuardFragment />
+              </Drift>
             </div>
           </div>
           <ChainStripFragment facts={facts} className="animate-rise mt-5" />

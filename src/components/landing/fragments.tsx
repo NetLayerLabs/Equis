@@ -34,7 +34,7 @@ export function CertificateFragment({
       className={cn("relative isolate overflow-hidden rounded-card border border-line bg-panel p-5 shadow-card", className)}
       style={style}
     >
-      <Guilloche className="pointer-events-none absolute -right-16 -top-20 -z-10 size-64 text-brass/[0.13]" />
+      <Guilloche className="animate-spin-slow pointer-events-none absolute -right-16 -top-20 -z-10 size-64 text-brass/[0.13]" />
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] uppercase tracking-[0.22em] text-faint">Collateral certificate</p>
