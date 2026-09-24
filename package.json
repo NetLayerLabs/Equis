@@ -1,6 +1,9 @@
 {
   "name": "equis",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=22.18"
+  },
   "private": true,
   "license": "Apache-2.0",
   "type": "module",

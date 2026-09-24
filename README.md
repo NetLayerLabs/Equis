@@ -49,6 +49,11 @@ Pool: 250,000 USD₮0 supply cap, 10% reserve factor, 0% base rate rising to 8% 
 liquidation, onchain price verification, EIP-7702 batching, a dashboard reading all of it from the chain, a
 Telegram bot, and an MCP server that exposes the whole protocol to AI tools.
 
+**Live but unfunded:** nobody has supplied USD₮0 into the pool yet, so `totalAssets()` reads 0 and a borrow
+reverts with `InsufficientCash()`. That revert comes from the pool *after* the oracle has already verified
+RedStone's three-of-five signatures onchain - `borrow()` runs `_updatePrices(priceReports)` before it touches
+the pool - so everything upstream of liquidity is working. Supply into the pool and the same borrow clears.
+
 **Not built, on purpose:** the yield router described in the original project spec, and SPY/QQQ collateral
 (no public price feed exists for them). Saying so beats overclaiming.
 
@@ -108,7 +113,8 @@ cannot redirect funds even if it is allowlisted.
 
 ## Telegram
 
-`@EquisBot` answers from the same chain reads as the dashboard, so the two cannot disagree.
+[`@EquisAppBot`](https://t.me/EquisAppBot) reads through the same module as the MCP server
+(`src/lib/server/equisReads.ts`), so a chat and an agent cannot quote different numbers for one address.
 
 | Command | Does |
 | --- | --- |
@@ -165,6 +171,8 @@ Reads need no API key. The prices come from RedStone's public gateway.
 
 ## Quickstart
 
+Node 24 or newer, because `scripts/` is TypeScript that node runs directly via type stripping.
+
 ```bash
 npm install
 npm run dev                  # dashboard at http://localhost:3000, reading the live deployment
@@ -188,19 +196,31 @@ to a multisig for anything holding real money.
 
 35 tests pass against forked mainnet state, covering the pool's interest accrual and share accounting,
 session key scoping and expiry, oracle verification of a **real signed payload** including a tampered payload
-that must fail, and the Chainlink push feed path. One suite skips unless you supply a paid Chainlink Data
-Streams fixture.
+that must fail, the vault-relayed payload path, and the Chainlink push feed path.
+
+`forge test` also reports 1 skipped, and it is worth being precise about which: the whole of
+`EquisMarginVault.t.sol` (6 cases - borrow against a real price, LTV enforcement, withdraw blocked while in
+debt, liquidation bonus, agent session repay). It prices collateral through Chainlink Data Streams and needs a
+gitignored fixture that costs $150 per stream per month. **The borrow path that is actually deployed** - vault
+relays a RedStone payload, oracle verifies it, collateral is priced - runs on every `forge test` via
+`test_VaultRelayedReportPricesStocks`.
 
 ## Layout
 
 ```
-src/                 Next.js 14 dashboard (App Router)
-  app/app/           Overview, Markets, Earn, Agent keys
-  lib/               chain config, ABIs, RedStone client
+src/app/             Next.js 14 App Router
+  page.tsx           Landing page, quoting live chain readings
+  app/               Dashboard: Overview, Markets (and a page per market), Earn, Agent keys
+  api/               Price and signed-report routes
+src/components/      landing/, app/, pool/, brand/
+src/lib/             chain config, ABIs, risk params, xStocks
+  server/            Shared chain reads and the RedStone payload builder, used by the
+                     dashboard, the Telegram bot and the MCP server alike
 contracts/src/       Solidity: vault, pool, oracle, delegate, rate model
 contracts/test/      Foundry fork tests against real mainnet state
 contracts/script/    Deployment
-scripts/             MCP server, Telegram bot, payload fetcher for tests and deployment
+scripts/             MCP server, Telegram bot, payload fetchers
+deploy/              systemd units and a Caddyfile for running the bot on a VPS
 ```
 
 ## Security and limitations
