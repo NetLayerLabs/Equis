@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import type { ReactNode } from "react";
 import { useReadContracts } from "wagmi";
 import { aggregatorV3Abi } from "@/lib/abis";
 import { CHAINLINK_OKB_USD, CHAINLINK_USDT0_USD, CHAINLINK_SEQUENCER_UPTIME } from "@/lib/contracts";
@@ -23,7 +25,16 @@ export function ChainStats() {
 
   return (
     <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
-      <Stat label="Network" value="X Layer · 196" hint="Chain ID" />
+      <Stat
+        label="Network"
+        value={
+          <span className="flex items-center gap-2">
+            <Image src="/xlayer.png" alt="X Layer" width={34} height={34} className="rounded-md" priority />
+            <span className="sr-only">X Layer</span>
+          </span>
+        }
+        hint="Chain 196"
+      />
       <Stat
         label="USD₮0 / USD"
         value={usdt0 ? `$${(Number(usdt0[1]) / 1e8).toFixed(4)}` : isLoading ? "…" : "-"}
@@ -43,7 +54,7 @@ export function ChainStats() {
   );
 }
 
-function Stat({ label, value, hint }: { label: string; value: string; hint: string }) {
+function Stat({ label, value, hint }: { label: string; value: ReactNode; hint: string }) {
   return (
     <div className="bg-panel px-4 py-3">
       <dt className="text-[11px] uppercase tracking-[0.18em] text-muted">{label}</dt>
