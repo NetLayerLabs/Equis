@@ -2,7 +2,10 @@ import type { Address } from "viem";
 
 export const X_LAYER_CHAIN_ID = 196;
 export const X_LAYER_RPC_URL = "https://rpc.xlayer.tech";
-export const OKLINK_ADDRESS_URL = "https://www.oklink.com/x-layer/address/";
+/** OKX's own explorer for X Layer. */
+export const OKX_EXPLORER_URL = "https://web3.okx.com/explorer/x-layer";
+export const OKX_ADDRESS_URL = `${OKX_EXPLORER_URL}/evm/address/`;
+export const OKX_TX_URL = `${OKX_EXPLORER_URL}/evm/tx/`;
 
 /** Verified onchain X Layer mainnet addresses (see contracts/src/libraries/XLayer.sol). */
 export const USDT0: Address = "0x779Ded0c9e1022225f8E0630b35a9b54bE713736";

@@ -20,7 +20,7 @@ export function ClosingCta() {
             Open dashboard
           </Link>
           <a
-            href="https://www.oklink.com/x-layer"
+            href="https://web3.okx.com/explorer/x-layer"
             target="_blank"
             rel="noreferrer"
             className={buttonClass("secondary", "lg")}

@@ -1,9 +1,7 @@
 "use client";
 
-import { OKLINK_ADDRESS_URL } from "@/lib/contracts";
+import { OKX_TX_URL } from "@/lib/contracts";
 import { Pill } from "@/components/ui";
-
-const TX_URL = OKLINK_ADDRESS_URL.replace("/address/", "/tx/");
 
 /** One consistent place for pending / failed / confirmed, with the hash always linked to the explorer. */
 export function TxFeedback({
@@ -31,7 +29,7 @@ export function TxFeedback({
       {isConfirming && <Pill tone="brass">Confirming onchain</Pill>}
       {isSuccess && <Pill tone="good">Confirmed</Pill>}
       {hash && (
-        <a href={`${TX_URL}${hash}`} target="_blank" rel="noreferrer" className="font-mono hover:text-brass">
+        <a href={`${OKX_TX_URL}${hash}`} target="_blank" rel="noreferrer" className="font-mono hover:text-brass">
           {hash.slice(0, 10)}…{hash.slice(-6)}
         </a>
       )}

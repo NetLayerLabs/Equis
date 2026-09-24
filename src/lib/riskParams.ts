@@ -1,4 +1,5 @@
 import type { Address } from "viem";
+import { OKX_ADDRESS_URL } from "@/lib/contracts";
 
 /**
  * Risk parameters as configured in contracts/script/DeployEquis.s.sol. Once the vault is deployed the UI reads
@@ -15,5 +16,5 @@ export const RISK_PARAMS: Record<string, { ltvBps: number; liquidationThresholdB
 export const POOL_SUPPLY_CAP_USDT0 = 250_000n * 10n ** 6n;
 
 export function explorerUrl(address: Address | string): string {
-  return `https://www.oklink.com/x-layer/address/${address}`;
+  return `${OKX_ADDRESS_URL}${address}`;
 }

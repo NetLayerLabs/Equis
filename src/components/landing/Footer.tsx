@@ -21,7 +21,7 @@ const COLUMNS: ReadonlyArray<{ heading: string; links: ReadonlyArray<{ label: st
   {
     heading: "Project",
     links: [
-      { label: "X Layer explorer", href: "https://www.oklink.com/x-layer" },
+      { label: "X Layer explorer", href: "https://web3.okx.com/explorer/x-layer" },
       { label: "xStocks", href: "https://xstocks.com" },
       { label: "Chainlink Data Streams", href: "https://docs.chain.link/data-streams" },
     ],
