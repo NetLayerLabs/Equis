@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { NetworkBanner } from "@/components/app/NetworkBanner";
 import { Sidebar } from "@/components/app/Sidebar";
 
 /** Chrome for every /app route: the rail on the left, the page beside it. */
@@ -12,6 +13,7 @@ export function AppShell({ title, lede, children }: { title: string; lede?: stri
             <h1 className="text-2xl text-text">{title}</h1>
             {lede ? <p className="mt-2 max-w-2xl text-sm text-muted">{lede}</p> : null}
           </header>
+          <NetworkBanner />
           {children}
         </main>
         <footer className="border-t border-line">

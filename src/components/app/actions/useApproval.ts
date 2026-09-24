@@ -2,6 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import type { Address } from "viem";
+import { xLayer } from "wagmi/chains";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { erc20Abi } from "@/lib/abis";
 
@@ -31,7 +32,7 @@ export function useApproval({ token, spender, amount }: { token?: Address; spend
     approve: () => {
       if (!token || !spender) return;
       reset();
-      writeContract({ address: token, abi: erc20Abi, functionName: "approve", args: [spender, amount] });
+      writeContract({ chainId: xLayer.id, address: token, abi: erc20Abi, functionName: "approve", args: [spender, amount] });
     },
     hash,
     isPending,

@@ -37,6 +37,7 @@ export function OneSignaturePanel() {
   const open = () => {
     if (!vault || !ready) return;
     sendCalls({
+      chainId: xLayer.id,
       calls: [
         {
           to: asset,

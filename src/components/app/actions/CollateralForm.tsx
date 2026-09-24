@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { parseUnits, type Address } from "viem";
+import { xLayer } from "wagmi/chains";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { reportBytes, useStreamReports } from "@/hooks/useStreamReports";
 import { erc20Abi, marginVaultAbi } from "@/lib/abis";
@@ -56,9 +57,10 @@ export function CollateralForm({ mode, lockedAsset }: { mode: "deposit" | "withd
     if (!vault || parsed === 0n) return;
     reset();
     if (mode === "deposit") {
-      writeContract({ address: vault, abi: marginVaultAbi, functionName: "depositCollateral", args: [asset, parsed] });
+      writeContract({ chainId: xLayer.id, address: vault, abi: marginVaultAbi, functionName: "depositCollateral", args: [asset, parsed] });
     } else {
       writeContract({
+        chainId: xLayer.id,
         address: vault,
         abi: marginVaultAbi,
         functionName: "withdrawCollateral",

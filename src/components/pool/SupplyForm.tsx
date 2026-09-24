@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { parseUnits } from "viem";
+import { xLayer } from "wagmi/chains";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { AmountField } from "@/components/app/actions/AmountField";
 import { TxFeedback } from "@/components/app/actions/TxFeedback";
@@ -47,9 +48,10 @@ export function SupplyForm({ mode }: { mode: "supply" | "withdraw" }) {
     if (!address || parsed === 0n) return;
     reset();
     if (mode === "supply") {
-      writeContract({ address: deployment.pool, abi: lendingPoolAbi, functionName: "deposit", args: [parsed, address] });
+      writeContract({ chainId: xLayer.id, address: deployment.pool, abi: lendingPoolAbi, functionName: "deposit", args: [parsed, address] });
     } else {
       writeContract({
+        chainId: xLayer.id,
         address: deployment.pool,
         abi: lendingPoolAbi,
         functionName: "withdraw",

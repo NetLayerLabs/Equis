@@ -3,6 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { parseUnits } from "viem";
+import { xLayer } from "wagmi/chains";
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { reportBytes, useStreamReports } from "@/hooks/useStreamReports";
 import { erc20Abi, lendingPoolAbi, marginVaultAbi } from "@/lib/abis";
@@ -52,13 +53,14 @@ export function CreditForm({ mode }: { mode: "borrow" | "repay" }) {
     reset();
     if (mode === "borrow") {
       writeContract({
+        chainId: xLayer.id,
         address: vault,
         abi: marginVaultAbi,
         functionName: "borrow",
         args: [parsed, reportBytes(reports.data)],
       });
     } else if (address) {
-      writeContract({ address: vault, abi: marginVaultAbi, functionName: "repay", args: [address, parsed] });
+      writeContract({ chainId: xLayer.id, address: vault, abi: marginVaultAbi, functionName: "repay", args: [address, parsed] });
     }
   };
 
