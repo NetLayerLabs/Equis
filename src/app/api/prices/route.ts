@@ -15,12 +15,20 @@ type DataPackage = {
   signerAddress: string;
 };
 
-// The gateway returns every feed in one ~2MB document, so it is cached briefly and shared by all callers.
-export const revalidate = 20;
+/*
+ * The gateway returns every feed in one ~2MB document, so the response is shared by all callers for 20
+ * seconds at the CDN. Not ISR: `marketOpen` is computed when the response is built, so serving it stale
+ * would show an old price as though the market were still trading.
+ */
+export const dynamic = "force-dynamic";
+/** RedStone's gateway returns a ~2MB document and can take several seconds. Vercel's default
+ *  function timeout is shorter than that is comfortable, so ask for room. */
+export const maxDuration = 30;
+const CDN_CACHE = "public, s-maxage=20, must-revalidate";
 
 export async function GET() {
   try {
-    const res = await fetch(GATEWAY, { next: { revalidate: 20 } });
+    const res = await fetch(GATEWAY, { next: { revalidate: 20 } });  // shared across callers on this instance
     if (!res.ok) throw new Error(`RedStone gateway ${res.status}`);
     const packages = (await res.json()) as Record<string, DataPackage[]>;
     const now = Math.floor(Date.now() / 1000);
@@ -42,7 +50,7 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json({ prices, fetchedAt: now });
+    return NextResponse.json({ prices, fetchedAt: now }, { headers: { "Cache-Control": CDN_CACHE } });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "RedStone gateway request failed" },

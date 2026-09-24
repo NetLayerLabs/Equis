@@ -11,12 +11,18 @@ import { XSTOCKS } from "@/lib/xstocks";
  */
 const GATEWAY = `https://oracle-gateway-1.a.redstone.finance/data-packages/latest/${REDSTONE_DATA_SERVICE_ID}`;
 
-// The payload expires after three minutes onchain, so it is only cached for a few seconds.
-export const revalidate = 5;
+/*
+ * Never cached. The payload expires three minutes after it is signed, and ISR is stale-while-revalidate:
+ * the first request after an idle period would be served a stale payload while a fresh one is built in the
+ * background, and the borrow carrying it would revert onchain. Correctness beats the saved gateway call.
+ */
+export const dynamic = "force-dynamic";
+/** Same gateway, same latency: give the function room rather than failing a borrow on a timeout. */
+export const maxDuration = 30;
 
 export async function GET() {
   try {
-    const res = await fetch(GATEWAY, { next: { revalidate: 5 } });
+    const res = await fetch(GATEWAY, { cache: "no-store" });
     if (!res.ok) throw new Error(`RedStone gateway ${res.status}`);
     const all = (await res.json()) as Record<string, unknown[]>;
 
@@ -37,12 +43,15 @@ export async function GET() {
     }
 
     const payload = RedstonePayload.prepare(signed, "equis");
-    return NextResponse.json({
-      assets: stocks.map((stock) => stock.wrapper),
-      symbols: stocks.map((stock) => stock.symbol),
-      payload: payload.startsWith("0x") ? payload : `0x${payload}`,
-      observedAt,
-    });
+    return NextResponse.json(
+      {
+        assets: stocks.map((stock) => stock.wrapper),
+        symbols: stocks.map((stock) => stock.symbol),
+        payload: payload.startsWith("0x") ? payload : `0x${payload}`,
+        observedAt,
+      },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "RedStone payload build failed" },
