@@ -45,7 +45,7 @@ export function MarketTable() {
   return (
     <section className="overflow-hidden rounded-lg border border-line bg-panel">
       <header className="border-b border-line px-4 py-3">
-        <p className="text-[11px] text-muted">xStocks wrappers on X Layer · prices from Chainlink Data Streams</p>
+        <p className="text-[11px] text-muted">xStocks wrappers on X Layer · share prices from RedStone (3-of-5 signers)</p>
       </header>
 
       {prices.isError && (
@@ -69,8 +69,10 @@ export function MarketTable() {
           <tbody className="divide-y divide-line">
             {XSTOCKS.map((stock, i) => {
               const price = prices.data?.prices.find((p) => p.wrapper === stock.wrapper);
-              const priceWei = price ? BigInt(price.price) : undefined;
               const multiplier = multipliers?.[i]?.result as bigint | undefined;
+              // One wrapper unit is one internal share, so it is worth the share price times the multiplier.
+              const priceWei =
+                price?.sharePrice && multiplier ? (BigInt(price.sharePrice) * multiplier) / WAD : undefined;
               const balance = balances?.[i]?.result as bigint | undefined;
               const params = RISK_PARAMS[stock.symbol];
 

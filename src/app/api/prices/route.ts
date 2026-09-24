@@ -1,54 +1,52 @@
-import { resolve } from "node:path";
 import { NextResponse } from "next/server";
-import { fetchLatestReport } from "@/lib/chainlink/dataStreams";
-import { decodeReportV10, wrapperPrice, MARKET_STATUS_OPEN } from "@/lib/chainlink/report";
 import { XSTOCKS } from "@/lib/xstocks";
 
-export const dynamic = "force-dynamic";
+/**
+ * Share prices from RedStone's public gateway. No credentials: the packages are signed by RedStone's
+ * primary-prod signers, the same set the onchain consumer checks, so the price can be proven later.
+ * The 24/5 feeds keep publishing outside US regular hours, which is when xStocks still trade.
+ */
+const GATEWAY = "https://oracle-gateway-1.a.redstone.finance/data-packages/latest/redstone-primary-prod";
+const FRESH_SECONDS = 300;
 
-/** Credentials stay server-side. They may live in the app env or in contracts/.env, used by the fetch script. */
-function credentials(): { apiKey: string; apiSecret: string } | null {
-  if (!process.env.CHAINLINK_STREAMS_API_KEY || !process.env.CHAINLINK_STREAMS_API_SECRET) {
-    try {
-      process.loadEnvFile(resolve(process.cwd(), "contracts/.env"));
-    } catch {
-      // No file: fall through to the null result below.
-    }
-  }
-  const apiKey = process.env.CHAINLINK_STREAMS_API_KEY;
-  const apiSecret = process.env.CHAINLINK_STREAMS_API_SECRET;
-  return apiKey && apiSecret ? { apiKey, apiSecret } : null;
-}
+type DataPackage = {
+  dataPoints: { dataFeedId: string; value: number }[];
+  timestampMilliseconds: number;
+  signerAddress: string;
+};
+
+// The gateway returns every feed in one ~2MB document, so it is cached briefly and shared by all callers.
+export const revalidate = 20;
 
 export async function GET() {
-  const creds = credentials();
-  if (!creds) {
-    return NextResponse.json(
-      { error: "Chainlink Data Streams credentials are not configured on the server (contracts/.env)." },
-      { status: 503 },
-    );
-  }
-
   try {
-    const prices = await Promise.all(
-      XSTOCKS.map(async ({ symbol, name, wrapper, streamId }) => {
-        const report = decodeReportV10((await fetchLatestReport(streamId, creds)).fullReport);
-        return {
-          symbol,
-          name,
-          wrapper,
-          // Serialised as strings: JSON has no bigint.
-          price: wrapperPrice(report).toString(),
-          sharePrice: report.price.toString(),
-          multiplier: report.currentMultiplier.toString(),
-          marketOpen: report.marketStatus === MARKET_STATUS_OPEN,
-          observedAt: report.observationsTimestamp,
-          activationDateTime: report.activationDateTime,
-        };
-      }),
-    );
-    return NextResponse.json({ prices, fetchedAt: Math.floor(Date.now() / 1000) }, { headers: { "cache-control": "no-store" } });
+    const res = await fetch(GATEWAY, { next: { revalidate: 20 } });
+    if (!res.ok) throw new Error(`RedStone gateway ${res.status}`);
+    const packages = (await res.json()) as Record<string, DataPackage[]>;
+    const now = Math.floor(Date.now() / 1000);
+
+    const prices = XSTOCKS.filter((stock) => stock.redstoneFeed).map((stock) => {
+      const feed = packages[stock.redstoneFeed as string] ?? [];
+      const value = feed[0]?.dataPoints[0]?.value;
+      const observedAt = feed[0] ? Math.floor(feed[0].timestampMilliseconds / 1000) : 0;
+      return {
+        symbol: stock.symbol,
+        name: stock.name,
+        wrapper: stock.wrapper,
+        feed: stock.redstoneFeed as string,
+        // Share price as 1e18 fixed point; the wrapper's price is this times its onchain multiplier.
+        sharePrice: value === undefined ? null : (BigInt(Math.round(value * 1e8)) * 10n ** 10n).toString(),
+        signers: feed.length,
+        observedAt,
+        marketOpen: observedAt > 0 && now - observedAt < FRESH_SECONDS,
+      };
+    });
+
+    return NextResponse.json({ prices, fetchedAt: now });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Data Streams request failed" }, { status: 502 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "RedStone gateway request failed" },
+      { status: 502 },
+    );
   }
 }

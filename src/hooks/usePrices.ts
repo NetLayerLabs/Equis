@@ -6,21 +6,20 @@ export type PriceRow = {
   symbol: string;
   name: string;
   wrapper: string;
-  /** USD price of one wrapper unit, 1e18, as a decimal string. */
-  price: string;
-  sharePrice: string;
-  multiplier: string;
-  marketOpen: boolean;
+  feed: string;
+  /** Underlying share price, 1e18, as a decimal string. Null when the feed carried no value. */
+  sharePrice: string | null;
+  signers: number;
   observedAt: number;
-  activationDateTime: number;
+  marketOpen: boolean;
 };
 
 export type PricesResponse = { prices: PriceRow[]; fetchedAt: number };
 
-/** Live Chainlink Data Streams prices, fetched through our server route so the API key stays server-side. */
+/** Live share prices, signed by RedStone's primary-prod signers and served without any credential. */
 export function usePrices() {
   return useQuery<PricesResponse>({
-    queryKey: ["stream-prices"],
+    queryKey: ["share-prices"],
     queryFn: async () => {
       const res = await fetch("/api/prices");
       const body = await res.json();
