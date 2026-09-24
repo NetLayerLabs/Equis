@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { IconTelegram, IconX } from "@/components/icons";
 
 const COLUMNS: ReadonlyArray<{ heading: string; links: ReadonlyArray<{ label: string; href: string }> }> = [
   {
@@ -28,6 +29,11 @@ const COLUMNS: ReadonlyArray<{ heading: string; links: ReadonlyArray<{ label: st
   },
 ];
 
+const SOCIALS = [
+  { label: "Equis on X", href: "https://x.com/EquisHQ", Icon: IconX },
+  { label: "@EquisAppBot on Telegram", href: "https://t.me/EquisAppBot", Icon: IconTelegram },
+];
+
 export function Footer() {
   return (
     <footer id="footer" className="border-t border-line bg-ink-deep">
@@ -39,6 +45,22 @@ export function Footer() {
               Margin credit against tokenized stocks on X Layer. Built for OKX Dev Day 2026 · Apache-2.0 ·
               unaudited, with deliberately small caps.
             </p>
+
+            <div className="mt-6 flex items-center gap-3">
+              {SOCIALS.map((social) => (
+                <a
+                  key={social.href}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={social.label}
+                  title={social.label}
+                  className="rounded-lg border border-line p-2.5 text-muted transition-colors hover:border-brass/50 hover:text-brass"
+                >
+                  <social.Icon />
+                </a>
+              ))}
+            </div>
           </div>
 
           {COLUMNS.map((column) => (
