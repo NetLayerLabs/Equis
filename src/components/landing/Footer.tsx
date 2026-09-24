@@ -9,6 +9,7 @@ const COLUMNS: ReadonlyArray<{ heading: string; links: ReadonlyArray<{ label: st
       { label: "Open dashboard", href: "/app" },
       { label: "Collateral markets", href: "/app/markets" },
       { label: "Agent keys", href: "/app/agent" },
+      { label: "Telegram bot", href: "https://t.me/EquisAppBot" },
     ],
   },
   {
@@ -16,6 +17,7 @@ const COLUMNS: ReadonlyArray<{ heading: string; links: ReadonlyArray<{ label: st
     links: [
       { label: "How it works", href: "/#how" },
       { label: "Architecture", href: "/#design" },
+      { label: "Three ways in", href: "/#surfaces" },
       { label: "Verified addresses", href: "/#verified" },
     ],
   },

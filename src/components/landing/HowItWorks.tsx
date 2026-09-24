@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/ui";
 const STEPS = [
   {
     title: "Deposit tokenized shares",
-    body: "Send wrapped xStocks - wNVDAx, wAAPLx, wTSLAx, wSPYx, wQQQx - into the vault. They stay yours: dividends and splits keep accruing through the wrapper's share multiplier while they sit as collateral.",
+    body: "Send wrapped xStocks - wNVDAx, wAAPLx, wTSLAx - into the vault. They stay yours: dividends and splits keep accruing through the wrapper's share multiplier while they sit as collateral. Only stocks with a public price feed are listed, because Equis will not lend against a price it cannot prove.",
   },
   {
     title: "Draw USD₮0 against them",

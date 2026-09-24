@@ -11,6 +11,7 @@ const ASSURANCES = [
   "You keep the shares and the upside",
   "Prices verified onchain, not quoted by us",
   "Agent keys are scoped, capped and expiring",
+  "Reachable from a wallet, from Telegram, or from an AI agent over MCP",
 ];
 
 /**
@@ -67,9 +68,9 @@ export function Hero({ facts }: { facts: ChainFacts | null }) {
             <em className="block font-display italic text-brass">Never sell them.</em>
           </h1>
           <p className="animate-rise mt-6 max-w-lg text-[1.05rem] leading-relaxed text-muted" style={delay(0.12)}>
-            Equis turns tokenized stocks on X Layer into working collateral. Deposit wrapped NVDA, AAPL,
-            TSLA, SPY or QQQ, draw USD₮0 against them, and let a scoped agent key defend the position
-            while the market moves.
+            Equis turns tokenized stocks on X Layer into working collateral. Deposit wrapped NVDA, AAPL
+            or TSLA, draw USD₮0 against them, and let a scoped agent key defend the position while the
+            market moves.
           </p>
 
           <div className="animate-rise mt-8 flex flex-wrap items-center gap-3" style={delay(0.18)}>

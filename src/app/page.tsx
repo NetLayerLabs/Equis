@@ -5,6 +5,7 @@ import { Footer } from "@/components/landing/Footer";
 import { Hero } from "@/components/landing/Hero";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { LandingNav } from "@/components/landing/LandingNav";
+import { ThreeWaysIn } from "@/components/landing/ThreeWaysIn";
 import { VerifiedOnChain } from "@/components/landing/VerifiedOnChain";
 import { readChainFacts } from "@/lib/server/chainFacts";
 
@@ -27,6 +28,7 @@ export default async function LandingPage() {
         <Hero facts={facts} />
         <HowItWorks />
         <Features />
+        <ThreeWaysIn />
         <VerifiedOnChain facts={facts} />
         <BuiltWith />
         <ClosingCta />
