@@ -1,5 +1,5 @@
 import type { Address } from "viem";
-import { OKX_ADDRESS_URL } from "@/lib/contracts";
+import { OKX_ADDRESS_URL } from "./contracts.ts";
 
 /**
  * Risk parameters as configured in contracts/script/DeployEquis.s.sol. Once the vault is deployed the UI reads
