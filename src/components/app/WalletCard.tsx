@@ -1,19 +1,18 @@
 "use client";
 
-import { useAccount, useChainId, useDisconnect, useConnect, useReadContract, useSwitchChain } from "wagmi";
-import { xLayer } from "wagmi/chains";
+import { useAccount, useDisconnect, useConnect, useReadContract } from "wagmi";
 import { erc20Abi } from "@/lib/abis";
 import { USDT0 } from "@/lib/contracts";
 import { formatAmount, shortenAddress } from "@/lib/format";
 import { Button } from "@/components/ui";
+import { useXLayer } from "@/lib/useXLayer";
 
 /** The foot of the sidebar: which chain, which account, and what it can spend. */
 export function WalletCard() {
   const { address, isConnected } = useAccount();
   const { connectors, connect, isPending } = useConnect();
   const { disconnect } = useDisconnect();
-  const chainId = useChainId();
-  const { switchChain } = useSwitchChain();
+  const { wrongChain, isSwitching, switchToXLayer } = useXLayer();
 
   const { data: balance } = useReadContract({
     address: USDT0,
@@ -42,8 +41,6 @@ export function WalletCard() {
     );
   }
 
-  const wrongChain = chainId !== xLayer.id;
-
   return (
     <div className="rounded-card border border-line bg-panel-soft p-4">
       <div className="flex items-center justify-between gap-2">
@@ -60,8 +57,8 @@ export function WalletCard() {
       </div>
 
       {wrongChain ? (
-        <Button variant="secondary" className="mt-3 w-full" onClick={() => switchChain({ chainId: xLayer.id })}>
-          Switch to X Layer
+        <Button variant="secondary" className="mt-3 w-full" onClick={switchToXLayer} disabled={isSwitching}>
+          {isSwitching ? "Switching…" : "Switch to X Layer"}
         </Button>
       ) : (
         <>
