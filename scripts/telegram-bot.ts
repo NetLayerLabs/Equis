@@ -1,5 +1,5 @@
 /**
- * @EquisBot: the Telegram side of Equis.
+ * @EquisAppBot: the Telegram side of Equis.
  *
  *   node scripts/telegram-bot.ts --check     verify the token and print the bot's name
  *   node scripts/telegram-bot.ts             run it (long polling, Ctrl-C to stop)

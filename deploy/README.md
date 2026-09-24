@@ -6,7 +6,7 @@ The contracts need no hosting; they are already on X Layer. This covers the two 
 
 | Process | Where | Why |
 | --- | --- | --- |
-| `@EquisBot` | VPS | Long-running: polls Telegram and re-checks watched positions every 60s |
+| `@EquisAppBot` | VPS | Long-running: polls Telegram and re-checks watched positions every 60s |
 | Dashboard | VPS or Vercel | Either works. Telegram Mini Apps require https, so it needs a real certificate |
 | Keeper | VPS | Must be awake when a position weakens |
 
