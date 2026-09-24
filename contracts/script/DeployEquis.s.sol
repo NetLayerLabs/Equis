@@ -58,53 +58,88 @@ contract DeployEquis is Script {
         m[2] = Market(XLayer.WTSLAX, bytes32("TSLA---24_7"), 4_000, 5_000, 1_000, 35_000e18); // pool ~$390k
     }
 
+    struct Deployment {
+        KinkedRateModel rateModel;
+        EquisLendingPool pool;
+        RedStonePriceOracle oracle;
+        EquisMarginVault vault;
+        EquisSessionDelegate sessionDelegate;
+    }
+
     function run() external {
         require(block.chainid == XLayer.CHAIN_ID, "not X Layer mainnet");
-        address owner = vm.envAddress("EQUIS_OWNER");
-        address guardian = vm.envAddress("EQUIS_GUARDIAN");
-        address treasury = vm.envAddress("EQUIS_TREASURY");
-        Market[] memory m = markets();
         bytes[] memory reports = _loadFreshPayload();
 
         vm.startBroadcast();
         (, address deployer,) = vm.readCallers();
 
-        KinkedRateModel rateModel = new KinkedRateModel(BASE_RATE, SLOPE_1, SLOPE_2, KINK);
-        EquisLendingPool pool =
-            new EquisLendingPool(IERC20(XLayer.USDT0), rateModel, deployer, treasury, RESERVE_FACTOR, POOL_SUPPLY_CAP);
-        RedStonePriceOracle oracle =
-            new RedStonePriceOracle(AggregatorV3Interface(XLayer.CHAINLINK_SEQUENCER_UPTIME), deployer);
-        EquisMarginVault vault = new EquisMarginVault(pool, oracle, deployer, guardian);
-        EquisSessionDelegate sessionDelegate = new EquisSessionDelegate();
+        Deployment memory d = _deploy(deployer);
+        _configure(d, reports);
+        _handOver(d, deployer);
+        vm.stopBroadcast();
 
-        pool.setVault(address(vault));
-        oracle.setFeed(XLayer.USDT0, AggregatorV3Interface(XLayer.CHAINLINK_USDT0_USD), USDT0_FEED_MAX_AGE);
+        _report(d, deployer);
+    }
+
+    function _deploy(address deployer) internal returns (Deployment memory d) {
+        d.rateModel = new KinkedRateModel(BASE_RATE, SLOPE_1, SLOPE_2, KINK);
+        d.pool = new EquisLendingPool(
+            IERC20(XLayer.USDT0),
+            d.rateModel,
+            deployer,
+            _role("EQUIS_TREASURY", deployer),
+            RESERVE_FACTOR,
+            POOL_SUPPLY_CAP
+        );
+        d.oracle = new RedStonePriceOracle(AggregatorV3Interface(XLayer.CHAINLINK_SEQUENCER_UPTIME), deployer);
+        d.vault = new EquisMarginVault(d.pool, d.oracle, deployer, _role("EQUIS_GUARDIAN", deployer));
+        d.sessionDelegate = new EquisSessionDelegate();
+    }
+
+    function _configure(Deployment memory d, bytes[] memory reports) internal {
+        d.pool.setVault(address(d.vault));
+        d.oracle.setFeed(XLayer.USDT0, AggregatorV3Interface(XLayer.CHAINLINK_USDT0_USD), USDT0_FEED_MAX_AGE);
+
+        Market[] memory m = markets();
         for (uint256 i; i < m.length; ++i) {
-            oracle.listStock(m[i].wrapper, m[i].redstoneFeed, PRICE_MAX_AGE, MARKET_OPEN_WINDOW);
+            d.oracle.listStock(m[i].wrapper, m[i].redstoneFeed, PRICE_MAX_AGE, MARKET_OPEN_WINDOW);
         }
 
         // Verify a real payload onchain, then size each cap from the price it produced.
-        oracle.updatePrices(reports);
+        d.oracle.updatePrices(reports);
         for (uint256 i; i < m.length; ++i) {
-            (uint256 price,) = oracle.getPrice(m[i].wrapper);
+            (uint256 price,) = d.oracle.getPrice(m[i].wrapper);
             uint256 capTokens = m[i].capUsd * 1e18 / price;
-            vault.listCollateral(
-                m[i].wrapper, m[i].ltvBps, m[i].liquidationThresholdBps, m[i].liquidationBonusBps, capTokens
-            );
-            console.log("collateral", m[i].wrapper, "cap (tokens, 18 dec)", capTokens);
+            d.vault
+                .listCollateral(
+                    m[i].wrapper, m[i].ltvBps, m[i].liquidationThresholdBps, m[i].liquidationBonusBps, capTokens
+                );
+            console.log("listed", m[i].wrapper, "cap (18 dec)", capTokens);
         }
+    }
 
-        pool.transferOwnership(owner);
-        oracle.transferOwnership(owner);
-        vault.transferOwnership(owner);
-        vm.stopBroadcast();
+    /// @dev Ownable2Step: the new owner must accept on each contract before it takes effect.
+    function _handOver(Deployment memory d, address deployer) internal {
+        address owner = _role("EQUIS_OWNER", deployer);
+        if (owner == deployer) return;
+        d.pool.transferOwnership(owner);
+        d.oracle.transferOwnership(owner);
+        d.vault.transferOwnership(owner);
+    }
 
-        console.log("KinkedRateModel       ", address(rateModel));
-        console.log("EquisLendingPool      ", address(pool));
-        console.log("RedStonePriceOracle   ", address(oracle));
-        console.log("EquisMarginVault      ", address(vault));
-        console.log("EquisSessionDelegate  ", address(sessionDelegate));
-        console.log("Pending owner (must acceptOwnership on pool, oracle, vault):", owner);
+    function _report(Deployment memory d, address deployer) internal view {
+        console.log("KinkedRateModel       ", address(d.rateModel));
+        console.log("EquisLendingPool      ", address(d.pool));
+        console.log("RedStonePriceOracle   ", address(d.oracle));
+        console.log("EquisMarginVault      ", address(d.vault));
+        console.log("EquisSessionDelegate  ", address(d.sessionDelegate));
+        console.log("Owner                 ", _role("EQUIS_OWNER", deployer));
+    }
+
+    /// @dev Each role falls back to the deployer, so one funded key is enough to launch. Point EQUIS_OWNER at
+    ///      a multisig before this holds anything you would miss.
+    function _role(string memory name, address fallbackAddress) internal view returns (address) {
+        return vm.envOr(name, fallbackAddress);
     }
 
     /// @dev Packs the fetched payload the way RedStonePriceOracle.updatePrices expects.
