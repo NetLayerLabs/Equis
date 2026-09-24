@@ -32,8 +32,9 @@ contract DeployEquis is Script {
     }
 
     string internal constant PAYLOAD_PATH = "test/fixtures/redstone-payload.json";
-    /// @dev RedStone rejects a payload older than three minutes; leave room for the broadcast itself.
-    uint256 internal constant MAX_PAYLOAD_AGE = 90 seconds;
+    /// @dev RedStone rejects a payload older than three minutes onchain. This preflight guard leaves room
+    ///      for the keystore password prompt and block inclusion without cutting it fine.
+    uint256 internal constant MAX_PAYLOAD_AGE = 120 seconds;
 
     // Lending pool: guarded launch.
     uint256 internal constant POOL_SUPPLY_CAP = 250_000e6;
