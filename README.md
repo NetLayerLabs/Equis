@@ -46,7 +46,8 @@ Pool: 250,000 USD₮0 supply cap, 10% reserve factor, 0% base rate rising to 8% 
 ## What is live, and what is not
 
 **Live:** deposit and withdraw collateral, borrow and repay USD₮0, supply and withdraw as a lender,
-liquidation, onchain price verification, EIP-7702 batching, and a dashboard reading all of it from the chain.
+liquidation, onchain price verification, EIP-7702 batching, a dashboard reading all of it from the chain, a
+Telegram bot, and an MCP server that exposes the whole protocol to AI tools.
 
 **Not built, on purpose:** the yield router described in the original project spec, and SPY/QQQ collateral
 (no public price feed exists for them). Saying so beats overclaiming.
@@ -127,6 +128,41 @@ node scripts/telegram-bot.ts           # run it
 Set `EQUIS_APP_URL` to an https address and the bot adds a button that opens the dashboard as a Telegram
 Mini App. The interface already adapts to Telegram's viewport and theme.
 
+## Use it from an AI tool
+
+Equis ships an MCP server, so Claude Code, Claude Desktop, Cursor, Codex and anything else that speaks the
+Model Context Protocol can read the protocol and prepare transactions against it. Clone the repo, run
+`npm install`, and Claude Code picks up the `.mcp.json` in the root on its own. Everything else registers it
+the same way:
+
+```json
+{
+  "mcpServers": {
+    "equis": { "command": "node", "args": ["scripts/mcp-server.ts"] }
+  }
+}
+```
+
+| Tool | Does |
+| --- | --- |
+| `equis_overview` | The deployment, the listed collateral and its risk parameters |
+| `equis_markets` | Live prices, signed by RedStone |
+| `equis_pool` | Supplied, borrowed, utilisation and both APYs |
+| `equis_position` | Collateral, debt, borrow power and health factor for an address |
+| `equis_quote_borrow` | What a given amount of collateral is worth and what it can borrow |
+| `equis_build_transaction` | Unsigned `{ to, data, value }` for any action |
+
+`equis_build_transaction` is the useful one. Ask for a borrow and it returns calldata with a **freshly signed
+RedStone price already embedded**, so the transaction verifies its own price onchain and draws USD₮0 in a
+single send. The payload is good for three minutes.
+
+**The server holds no key and signs nothing.** It returns bytes; whatever you sign with stays outside this
+process. That is the point: an agent can plan a position, quote it and hand you a transaction, while the
+authority to move funds stays where you put it - in your wallet, or in an EIP-7702 session key scoped to
+repay and top up collateral and nothing else.
+
+Reads need no API key. The prices come from RedStone's public gateway.
+
 ## Quickstart
 
 ```bash
@@ -164,7 +200,7 @@ src/                 Next.js 14 dashboard (App Router)
 contracts/src/       Solidity: vault, pool, oracle, delegate, rate model
 contracts/test/      Foundry fork tests against real mainnet state
 contracts/script/    Deployment
-scripts/             Payload fetcher for tests and deployment
+scripts/             MCP server, Telegram bot, payload fetcher for tests and deployment
 ```
 
 ## Security and limitations
