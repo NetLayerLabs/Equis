@@ -12,7 +12,7 @@ import { XSTOCKS } from "../xstocks.ts";
  * One definition of what a position is, so the bot and the dashboard can never disagree.
  */
 /** A server-only endpoint wins over the public one, so a keyed RPC never reaches the browser bundle. */
-export const SERVER_RPC_URL = process.env.X_LAYER_RPC_URL ?? X_LAYER_RPC_URL;
+export const SERVER_RPC_URL = process.env.X_LAYER_RPC_URL?.trim() || X_LAYER_RPC_URL;
 
 export const client = createPublicClient({ chain: xLayer, transport: http(SERVER_RPC_URL) });
 

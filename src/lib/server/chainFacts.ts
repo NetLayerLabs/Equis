@@ -31,7 +31,7 @@ export type ChainFacts = {
 };
 
 export async function readChainFacts(): Promise<ChainFacts | null> {
-  const client = createPublicClient({ chain: xLayer, transport: http(process.env.X_LAYER_RPC_URL ?? X_LAYER_RPC_URL) });
+  const client = createPublicClient({ chain: xLayer, transport: http(process.env.X_LAYER_RPC_URL?.trim() || X_LAYER_RPC_URL) });
 
   try {
     const [usdt0Round, okbRound, sequencerRound, blockNumber, wrappers] = await Promise.all([

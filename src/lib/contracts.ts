@@ -1,12 +1,24 @@
 import type { Address } from "viem";
 
+/**
+ * A blank environment variable means "unset", not "set to empty string".
+ *
+ * `??` only falls back on undefined, and deployment platforms hand you empty strings: Vercel's project
+ * setup detects the names in .env.example and pre-fills them blank, so saving that form without typing
+ * anything would otherwise leave the app pointing at "" for every address and for the RPC.
+ */
+function env(value: string | undefined, fallback: string): string {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : fallback;
+}
+
 export const X_LAYER_CHAIN_ID = 196;
 /**
  * X Layer's public RPC by default. Set NEXT_PUBLIC_X_LAYER_RPC_URL to use your own: the public endpoint
  * rate-limits datacenter IPs, which is what a Vercel deployment reads from. Server-side callers may also
  * set X_LAYER_RPC_URL (no NEXT_PUBLIC_ prefix) to keep a keyed endpoint out of the browser bundle.
  */
-export const X_LAYER_RPC_URL = process.env.NEXT_PUBLIC_X_LAYER_RPC_URL ?? "https://rpc.xlayer.tech";
+export const X_LAYER_RPC_URL = env(process.env.NEXT_PUBLIC_X_LAYER_RPC_URL, "https://rpc.xlayer.tech");
 /** OKX's own explorer for X Layer. */
 export const OKX_EXPLORER_URL = "https://web3.okx.com/explorer/x-layer";
 export const OKX_ADDRESS_URL = `${OKX_EXPLORER_URL}/evm/address/`;
@@ -23,10 +35,10 @@ export const CHAINLINK_SEQUENCER_UPTIME: Address = "0x45c2b8C204568A03Dc7A2E32B7
  * set NEXT_PUBLIC_EQUIS_* to point the app at your own deployment instead.
  */
 export const deployment = {
-  vault: (process.env.NEXT_PUBLIC_EQUIS_VAULT ?? "0x6577BFc845B9Bf56DAF38b0ff0b2dD248Ad4885F") as Address,
-  pool: (process.env.NEXT_PUBLIC_EQUIS_POOL ?? "0xC6e2EFc3f92B9eE88ae66000cB1c66ee20F1fF8e") as Address,
-  oracle: (process.env.NEXT_PUBLIC_EQUIS_ORACLE ?? "0x478A62bDD88A26d10c854F4E382fDE0573d16b4d") as Address,
-  sessionDelegate: (process.env.NEXT_PUBLIC_EQUIS_SESSION_DELEGATE ?? "0x946A509bC424367c7F6C3d0e534e037026c917eD") as Address,
+  vault: env(process.env.NEXT_PUBLIC_EQUIS_VAULT, "0x6577BFc845B9Bf56DAF38b0ff0b2dD248Ad4885F") as Address,
+  pool: env(process.env.NEXT_PUBLIC_EQUIS_POOL, "0xC6e2EFc3f92B9eE88ae66000cB1c66ee20F1fF8e") as Address,
+  oracle: env(process.env.NEXT_PUBLIC_EQUIS_ORACLE, "0x478A62bDD88A26d10c854F4E382fDE0573d16b4d") as Address,
+  sessionDelegate: env(process.env.NEXT_PUBLIC_EQUIS_SESSION_DELEGATE, "0x946A509bC424367c7F6C3d0e534e037026c917eD") as Address,
 } as const;
 
 export const isDeployed = Boolean(deployment.vault && deployment.pool);
