@@ -55,7 +55,7 @@ export function CreditForm({ mode }: { mode: "borrow" | "repay" }) {
         address: vault,
         abi: marginVaultAbi,
         functionName: "borrow",
-        args: [parsed, reportBytes(reports.data?.reports)],
+        args: [parsed, reportBytes(reports.data)],
       });
     } else if (address) {
       writeContract({ address: vault, abi: marginVaultAbi, functionName: "repay", args: [address, parsed] });

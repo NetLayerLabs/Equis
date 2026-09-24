@@ -60,7 +60,7 @@ export function CollateralForm({ mode }: { mode: "deposit" | "withdraw" }) {
         address: vault,
         abi: marginVaultAbi,
         functionName: "withdrawCollateral",
-        args: [asset, parsed, reportBytes(reports.data?.reports)],
+        args: [asset, parsed, reportBytes(reports.data)],
       });
     }
   };

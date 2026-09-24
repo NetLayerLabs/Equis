@@ -55,7 +55,7 @@ export function OneSignaturePanel() {
           data: encodeFunctionData({
             abi: marginVaultAbi,
             functionName: "borrow",
-            args: [borrowAmount, reportBytes(reports.data?.reports)],
+            args: [borrowAmount, reportBytes(reports.data)],
           }),
         },
       ],
