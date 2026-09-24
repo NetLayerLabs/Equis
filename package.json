@@ -14,6 +14,8 @@
     "contracts:test": "forge test --root contracts -vvv"
   },
   "dependencies": {
+    "@redstone-finance/protocol": "^1.0.0",
+    "@redstone-finance/sdk": "^1.0.0",
     "@tanstack/react-query": "^5.102.8",
     "framer-motion": "^11.18.2",
     "lucide-react": "^1.46.0",
