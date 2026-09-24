@@ -68,7 +68,7 @@ export function Footer() {
           {COLUMNS.map((column) => (
             <div key={column.heading}>
               <h2 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-faint">{column.heading}</h2>
-              <ul className="mt-5 space-y-3.5">
+              <ul className="mt-4 space-y-2">
                 {column.links.map((link) => {
                   const external = link.href.startsWith("http");
                   return (
