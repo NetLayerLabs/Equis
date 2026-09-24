@@ -52,7 +52,14 @@
   /* The header bar sits half as far from the edges as the body content, at any width. */
   .shell-nav {
     @apply mx-auto w-full;
-    padding-inline: calc(max(0px, 100vw - 82rem) / 4 + 0.875rem);
+    /* Tight against the edge on a phone; half the body gutter once there is room. */
+    padding-inline: calc(max(0px, 100vw - 82rem) / 4 + 0.5rem);
+  }
+
+  @media (min-width: 640px) {
+    .shell-nav {
+      padding-inline: calc(max(0px, 100vw - 82rem) / 4 + 0.875rem);
+    }
   }
 }
 

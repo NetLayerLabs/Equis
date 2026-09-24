@@ -27,7 +27,7 @@ export function Logo({ className, markClassName }: { className?: string; markCla
         src="/equis-header.png"
         alt="Equis"
         width={900}
-        height={225}
+        height={252}
         priority
         className={cn("h-[3.375rem] w-auto", markClassName)}
       />
