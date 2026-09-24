@@ -2,10 +2,10 @@
 
 Margin credit against tokenized stocks on X Layer. Deposit tokenized shares of NVIDIA, Apple or Tesla as
 collateral, borrow USD₮0 against them, and keep the shares: no sale, no taxable disposal, no lost upside.
-An optional EIP-7702 session key lets an agent defend the position while you sleep, without ever being able
-to withdraw or borrow.
+An optional EIP-7702 session key lets you hand an agent a mandate it cannot exceed: repay and top up
+collateral, up to a cap, until an expiry - never withdraw, never borrow.
 
-Built for OKX Dev Day 2026, track "X Layer: tokenized stocks and RWA". Live on X Layer mainnet.
+Built for OKX Dev Day 2026 - Build a Market track, Remote Build route. Live on X Layer mainnet.
 
 ## Live on X Layer mainnet (chain 196)
 
@@ -46,13 +46,16 @@ Pool: 250,000 USD₮0 supply cap, 10% reserve factor, 0% base rate rising to 8% 
 ## What is live, and what is not
 
 **Live:** deposit and withdraw collateral, borrow and repay USD₮0, supply and withdraw as a lender,
-liquidation, onchain price verification, EIP-7702 batching, a dashboard reading all of it from the chain, a
+liquidation, onchain price verification, EIP-5792 batching over EIP-7702 gated on what the wallet advertises,
+a dashboard reading all of it from the chain, a
 Telegram bot, and an MCP server that exposes the whole protocol to AI tools.
 
-**Live but unfunded:** nobody has supplied USD₮0 into the pool yet, so `totalAssets()` reads 0 and a borrow
-reverts with `InsufficientCash()`. That revert comes from the pool *after* the oracle has already verified
-RedStone's three-of-five signatures onchain - `borrow()` runs `_updatePrices(priceReports)` before it touches
-the pool - so everything upstream of liquidity is working. Supply into the pool and the same borrow clears.
+**There is a real position open on mainnet.** The pool holds 12 USD₮0 supplied against 4 borrowed, 33%
+utilisation, with 0.053946 wNVDAx of collateral at a health factor of 1.814. The borrow that opened it is
+[`0xb896faa0…62c0b5ee`](https://web3.okx.com/explorer/x-layer/evm/tx/0xb896faa0e4965cb5bf4d970b5f7ced9f5eccc6a5ad9083b31bc7c7d662c0b5ee)
+at block 71,513,642: 1,700 bytes of calldata carrying a RedStone package signed by three of five signers,
+verified onchain by `_updatePrices(priceReports)` before the pool paid out, in a single send. It cost
+0.0000136 OKB.
 
 **Not built, on purpose:** the yield router described in the original project spec, and SPY/QQQ collateral
 (no public price feed exists for them). Saying so beats overclaiming.

@@ -69,8 +69,7 @@ export function Hero({ facts }: { facts: ChainFacts | null }) {
           </h1>
           <p className="animate-rise mt-6 max-w-lg text-[1.05rem] leading-relaxed text-muted" style={delay(0.12)}>
             Equis turns tokenized stocks on X Layer into working collateral. Deposit wrapped NVDA, AAPL
-            or TSLA, draw USD₮0 against them, and let a scoped agent key defend the position while the
-            market moves.
+            or TSLA, draw USD₮0 against them, and hand an agent key a mandate it cannot exceed.
           </p>
 
           <div className="animate-rise mt-8 flex flex-wrap items-center gap-3" style={delay(0.18)}>

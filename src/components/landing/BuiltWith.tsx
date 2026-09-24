@@ -4,7 +4,7 @@ const STACK = [
   { name: "RedStone", detail: "Signed 24/5 stock feeds, verified onchain" },
   { name: "Chainlink", detail: "Push feeds for USD₮0 and sequencer uptime" },
   { name: "USD₮0", detail: "The credit asset borrowers receive" },
-  { name: "OKX Agentic Wallet", detail: "Where a session key lives and acts" },
+  { name: "Any EIP-6963 wallet", detail: "OKX Wallet, MetaMask, Rabby - discovered, never hard-coded" },
   { name: "Foundry", detail: "Contracts tested against forked mainnet state" },
 ];
 

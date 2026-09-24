@@ -64,9 +64,11 @@ export function AgentPanel() {
       </Card>
 
       <Card className="p-5">
-        <h2 className="text-sm font-medium text-text">What a session key may do</h2>
+        <h2 className="text-sm font-medium text-text">What a session key may do, once granted</h2>
         <p className="mt-2 text-xs leading-relaxed text-muted">
-          The delegate enforces every line below in contract code, not in the interface.
+          The delegate enforces every line below in contract code, not in the interface. Granting runs through{" "}
+          <span className="font-mono text-[0.7rem] text-text">EquisSessionDelegate.grantSession</span> - the contract
+          is deployed and tested; the one-click grant is not in this build.
         </p>
         <dl className="mt-4 space-y-2.5 text-xs">
           {MANDATE.map(([label, value]) => (

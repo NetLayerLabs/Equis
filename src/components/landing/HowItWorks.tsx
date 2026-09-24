@@ -15,8 +15,8 @@ const STEPS = [
     body: "Under EIP-7702 your own account gains code. You grant a session key that may only repay or top up collateral, up to a spending cap, until an expiry you choose. It can never withdraw or borrow.",
   },
   {
-    title: "The position defends itself",
-    body: "When the health factor slips, the agent repays from your USD₮0 or adds collateral within its mandate - no approval round-trip at 3am. If it still falls through the threshold, anyone may liquidate at the last signed price the oracle verified.",
+    title: "The rails for a night shift",
+    body: "Put the position on /watch and the Telegram bot messages you the moment its health factor falls below 1.15, and again once it recovers above 1.25. An agent asks equis_build_transaction for the repay and gets it back unsigned, and the delegate caps what any key it holds may spend. If the position still falls through the threshold, anyone may liquidate at the last signed price the oracle verified.",
   },
 ];
 
@@ -32,7 +32,7 @@ export function HowItWorks() {
                 From share certificate to <em className="font-display italic text-brass">credit line</em>.
               </>
             }
-            lede="Four steps. You hold the shares and make the decisions; Equis handles the collateral maths, the pricing and the night shift."
+            lede="Four steps. You hold the shares and make the decisions; Equis handles the collateral maths and the pricing."
           />
           <LedgerRule className="mt-10 hidden max-w-xs lg:flex" />
         </div>
