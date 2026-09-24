@@ -51,14 +51,16 @@ server.registerTool(
       },
       explorer: `${OKX_ADDRESS_URL}${deployment.vault}`,
       debtAsset: { symbol: "USD₮0", address: USDT0, decimals: 6 },
+      // Risk parameters are reported only for what is actually listed onchain. An unlisted asset has no
+      // LTV to quote, and handing an agent one it could act on would be worse than saying nothing.
       collateral: XSTOCKS.map((stock) => ({
         symbol: stock.symbol,
         name: stock.name,
         address: stock.wrapper,
         decimals: 18,
         listed: Boolean(stock.redstoneFeed),
-        ...(RISK_PARAMS[stock.symbol] ?? {}),
-        note: stock.redstoneFeed ? undefined : "not listed: no public price feed exists for it",
+        ...(stock.redstoneFeed ? (RISK_PARAMS[stock.symbol] ?? {}) : {}),
+        note: stock.redstoneFeed ? undefined : "not listed: no public price feed exists for it, so it cannot be deposited or borrowed against",
       })),
       pricing:
         "Stock prices are RedStone packages signed by 3 of 5 known signers and verified onchain in the same transaction that spends them. A wrapper is worth the share price times its onchain multiplier.",
