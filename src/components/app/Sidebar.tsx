@@ -113,7 +113,7 @@ export function Sidebar() {
       {/* Mobile: a bar with a burger, and the same panel in a drawer behind it. */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-ink/90 px-4 py-3 backdrop-blur lg:hidden">
         <Link href="/" aria-label="Equis home">
-          <Logo />
+          <Logo markClassName="h-9" />
         </Link>
         <button
           type="button"

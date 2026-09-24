@@ -29,7 +29,7 @@ export function Logo({ className, markClassName }: { className?: string; markCla
         width={900}
         height={225}
         priority
-        className={cn("h-9 w-auto", markClassName)}
+        className={cn("h-[3.375rem] w-auto", markClassName)}
       />
     </span>
   );
