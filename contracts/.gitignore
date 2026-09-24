@@ -21,3 +21,4 @@ test/fixtures/stream-reports.json
 .env
 .env.*
 !.env.example
+test/fixtures/redstone-payload.json
