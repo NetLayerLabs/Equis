@@ -4,13 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ComponentType } from "react";
 import { EquisMark, Logo } from "@/components/brand/Logo";
-import { IconAgent, IconChevronLeft, IconClose, IconMarkets, IconMenu, IconOverview } from "@/components/icons";
+import {
+  IconAgent,
+  IconChevronLeft,
+  IconClose,
+  IconEarn,
+  IconMarkets,
+  IconMenu,
+  IconOverview,
+} from "@/components/icons";
 import { cn } from "@/lib/cn";
 import { WalletCard } from "./WalletCard";
 
 const NAV: ReadonlyArray<{ href: string; label: string; Icon: ComponentType<{ className?: string }> }> = [
   { href: "/app", label: "Overview", Icon: IconOverview },
   { href: "/app/markets", label: "Markets", Icon: IconMarkets },
+  { href: "/app/earn", label: "Earn", Icon: IconEarn },
   { href: "/app/agent", label: "Agent keys", Icon: IconAgent },
 ];
 

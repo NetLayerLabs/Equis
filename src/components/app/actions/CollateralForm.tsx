@@ -7,7 +7,7 @@ import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteCont
 import { reportBytes, useStreamReports } from "@/hooks/useStreamReports";
 import { erc20Abi, marginVaultAbi } from "@/lib/abis";
 import { deployment } from "@/lib/contracts";
-import { XSTOCKS } from "@/lib/xstocks";
+import { LISTED_XSTOCKS } from "@/lib/xstocks";
 import { Button } from "@/components/ui";
 import { AmountField } from "./AmountField";
 import { TxFeedback } from "./TxFeedback";
@@ -16,10 +16,12 @@ import { useApproval } from "./useApproval";
 const WRAPPER_DECIMALS = 18;
 
 /** Deposits move tokens in; withdrawals must leave the account solvent, so they carry fresh prices. */
-export function CollateralForm({ mode }: { mode: "deposit" | "withdraw" }) {
+export function CollateralForm({ mode, lockedAsset }: { mode: "deposit" | "withdraw"; lockedAsset?: Address }) {
   const { address } = useAccount();
   const queryClient = useQueryClient();
-  const [asset, setAsset] = useState<Address>(XSTOCKS[0].wrapper as Address);
+  const [selected, setSelected] = useState<Address>(LISTED_XSTOCKS[0].wrapper as Address);
+  const asset = lockedAsset ?? selected;
+  const setAsset = setSelected;
   const [amount, setAmount] = useState("");
   const reports = useStreamReports();
 
@@ -70,29 +72,31 @@ export function CollateralForm({ mode }: { mode: "deposit" | "withdraw" }) {
 
   return (
     <div>
-      <label className="block">
-        <span className="text-[11px] uppercase tracking-[0.18em] text-faint">Collateral</span>
-        <select
-          value={asset}
-          onChange={(event) => setAsset(event.target.value as Address)}
-          className="mt-2 w-full rounded-lg border border-line bg-ink px-3 py-2 text-sm text-text outline-none focus:border-brass/50"
-        >
-          {XSTOCKS.map((stock) => (
-            <option key={stock.wrapper} value={stock.wrapper}>
-              {stock.symbol} · {stock.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      {!lockedAsset && (
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-faint">Collateral</span>
+          <select
+            value={asset}
+            onChange={(event) => setAsset(event.target.value as Address)}
+            className="mt-2 w-full rounded-lg border border-line bg-ink px-3 py-2 text-sm text-text outline-none focus:border-brass/50"
+          >
+            {LISTED_XSTOCKS.map((stock) => (
+              <option key={stock.wrapper} value={stock.wrapper}>
+                {stock.symbol} · {stock.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
-      <div className="mt-4">
+      <div className={lockedAsset ? "" : "mt-4"}>
         <AmountField
           label={mode === "deposit" ? "Amount to deposit" : "Amount to withdraw"}
           value={amount}
           onChange={setAmount}
           max={max}
           decimals={WRAPPER_DECIMALS}
-          symbol={XSTOCKS.find((s) => s.wrapper === asset)?.symbol ?? ""}
+          symbol={LISTED_XSTOCKS.find((s) => s.wrapper === asset)?.symbol ?? ""}
           disabled={!address}
         />
       </div>

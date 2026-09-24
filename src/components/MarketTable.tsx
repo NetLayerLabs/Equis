@@ -1,10 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import type { Address } from "viem";
 import { useAccount, useReadContracts } from "wagmi";
 import { usePrices } from "@/hooks/usePrices";
 import { erc20Abi, erc4626Abi } from "@/lib/abis";
-import { isDeployed } from "@/lib/contracts";
 import { formatAmount, formatBps, formatUsd } from "@/lib/format";
 import { RISK_PARAMS, explorerUrl } from "@/lib/riskParams";
 import { XSTOCKS } from "@/lib/xstocks";
@@ -79,15 +79,25 @@ export function MarketTable() {
               return (
                 <tr key={stock.wrapper} className="hover:bg-white/[0.02]">
                   <td className="px-4 py-3">
-                    <a
-                      href={explorerUrl(stock.wrapper)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-medium text-text hover:text-brass"
+                    <Link
+                      href={`/app/markets/${stock.symbol}`}
+                      className="font-medium text-text transition-colors hover:text-brass"
                     >
                       {stock.symbol}
-                    </a>
-                    <div className="text-[11px] text-muted">{stock.name}</div>
+                    </Link>
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted">
+                      {stock.name}
+                      <a
+                        href={explorerUrl(stock.wrapper)}
+                        target="_blank"
+                        rel="noreferrer"
+                        title="View the token on the OKX explorer"
+                        aria-label={`${stock.symbol} on the OKX explorer`}
+                        className="text-faint transition-colors hover:text-brass"
+                      >
+                        ↗
+                      </a>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right font-mono tabular-nums text-text">
                     {priceWei ? formatUsd(priceWei) : prices.isLoading ? "…" : "-"}
@@ -96,8 +106,11 @@ export function MarketTable() {
                     {multiplier ? formatAmount(multiplier, 18, 6) : "…"}
                   </td>
                   <td className="px-4 py-3 text-right font-mono tabular-nums text-muted">
-                    {params ? formatBps(params.ltvBps) : "-"}
-                    {!isDeployed && <span className="ml-1 text-[10px] uppercase text-muted/70">planned</span>}
+                    {stock.redstoneFeed && params ? (
+                      formatBps(params.ltvBps)
+                    ) : (
+                      <span className="text-[10px] uppercase tracking-wide text-faint">not listed</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-right font-mono tabular-nums text-text">
                     {!address ? (
@@ -122,8 +135,10 @@ export function MarketTable() {
                       >
                         {price.marketOpen ? "Open" : "Closed"}
                       </span>
-                    ) : (
+                    ) : stock.redstoneFeed ? (
                       <span className="text-[11px] text-muted">-</span>
+                    ) : (
+                      <span className="text-[10px] text-faint">no public feed</span>
                     )}
                   </td>
                 </tr>

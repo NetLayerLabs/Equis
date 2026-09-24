@@ -7,7 +7,7 @@ import { xLayer } from "wagmi/chains";
 import { reportBytes, useStreamReports } from "@/hooks/useStreamReports";
 import { erc20Abi, marginVaultAbi } from "@/lib/abis";
 import { deployment, isDeployed } from "@/lib/contracts";
-import { XSTOCKS } from "@/lib/xstocks";
+import { LISTED_XSTOCKS } from "@/lib/xstocks";
 import { Button, Card, Pill } from "@/components/ui";
 import { AmountField } from "./AmountField";
 
@@ -17,7 +17,7 @@ import { AmountField } from "./AmountField";
  */
 export function OneSignaturePanel() {
   const { address } = useAccount();
-  const [asset, setAsset] = useState<Address>(XSTOCKS[0].wrapper as Address);
+  const [asset, setAsset] = useState<Address>(LISTED_XSTOCKS[0].wrapper as Address);
   const [collateral, setCollateral] = useState("");
   const [borrow, setBorrow] = useState("");
   const reports = useStreamReports();
@@ -87,7 +87,7 @@ export function OneSignaturePanel() {
               onChange={(event) => setAsset(event.target.value as Address)}
               className="mt-2 w-full rounded-lg border border-line bg-ink px-3 py-2 text-sm text-text outline-none focus:border-brass/50"
             >
-              {XSTOCKS.map((stock) => (
+              {LISTED_XSTOCKS.map((stock) => (
                 <option key={stock.wrapper} value={stock.wrapper}>
                   {stock.symbol} · {stock.name}
                 </option>
@@ -101,7 +101,7 @@ export function OneSignaturePanel() {
               value={collateral}
               onChange={setCollateral}
               decimals={18}
-              symbol={XSTOCKS.find((s) => s.wrapper === asset)?.symbol ?? ""}
+              symbol={LISTED_XSTOCKS.find((s) => s.wrapper === asset)?.symbol ?? ""}
               disabled={!address}
             />
             <AmountField

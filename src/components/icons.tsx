@@ -23,6 +23,16 @@ export function IconMarkets({ className }: IconProps) {
   );
 }
 
+export function IconEarn({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className ?? base} fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <ellipse cx="12" cy="6.5" rx="7" ry="3" />
+      <path d="M5 6.5v11c0 1.7 3.1 3 7 3s7-1.3 7-3v-11" />
+      <path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" />
+    </svg>
+  );
+}
+
 export function IconAgent({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className ?? base} fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">

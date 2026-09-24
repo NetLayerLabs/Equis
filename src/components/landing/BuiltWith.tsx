@@ -1,7 +1,8 @@
 const STACK = [
   { name: "X Layer", detail: "Chain 196 · Prague, so EIP-7702 works" },
   { name: "xStocks", detail: "Backed's tokenized shares and ERC-4626 wrappers" },
-  { name: "Chainlink", detail: "Data Streams reports, push feeds, sequencer uptime" },
+  { name: "RedStone", detail: "Signed 24/5 stock feeds, verified onchain" },
+  { name: "Chainlink", detail: "Push feeds for USD₮0 and sequencer uptime" },
   { name: "USD₮0", detail: "The credit asset borrowers receive" },
   { name: "OKX Agentic Wallet", detail: "Where a session key lives and acts" },
   { name: "Foundry", detail: "Contracts tested against forked mainnet state" },

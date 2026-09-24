@@ -42,3 +42,8 @@ export const XSTOCKS = [
     streamId: "0x000a1db22e3e1aa657d910dc90e1f0dbe693d345b7b0b04fd9efc8eb17aef267",
   },
 ] as const;
+
+export type XStock = (typeof XSTOCKS)[number];
+
+/** The collateral Equis actually lists onchain: an asset needs a public price feed to be lent against. */
+export const LISTED_XSTOCKS = XSTOCKS.filter((stock) => Boolean(stock.redstoneFeed));

@@ -1,10 +1,7 @@
 import { SectionHeading } from "@/components/ui";
 import type { ChainFacts } from "@/lib/server/chainFacts";
 import { explorerUrl } from "@/lib/riskParams";
-import {
-  CHAINLINK_STREAMS_VERIFIER_NOTE,
-  VERIFIED_ADDRESSES,
-} from "@/lib/verifiedAddresses";
+import { EQUIS_ADDRESSES, ORACLE_NOTE, VERIFIED_ADDRESSES } from "@/lib/verifiedAddresses";
 
 function shorten(address: string) {
   return `${address.slice(0, 10)}…${address.slice(-6)}`;
@@ -21,11 +18,36 @@ export function VerifiedOnChain({ facts }: { facts: ChainFacts | null }) {
               Addresses we checked <em className="font-display italic text-brass">ourselves</em>.
             </>
           }
-          lede={CHAINLINK_STREAMS_VERIFIER_NOTE}
+          lede={ORACLE_NOTE}
           className="max-w-2xl"
         />
 
-        <div className="mt-12 overflow-x-auto rounded-card border border-line bg-panel">
+        <p className="mt-12 text-[11px] font-semibold uppercase tracking-[0.24em] text-brass">Deployed by us</p>
+        <div className="mt-4 overflow-x-auto rounded-card border border-line bg-panel">
+          <table className="w-full min-w-[640px] text-sm">
+            <tbody className="divide-y divide-line">
+              {EQUIS_ADDRESSES.map((entry) => (
+                <tr key={entry.address}>
+                  <td className="px-5 py-3 text-text">{entry.label}</td>
+                  <td className="px-5 py-3 text-muted">{entry.role}</td>
+                  <td className="px-5 py-3 text-right">
+                    <a
+                      href={explorerUrl(entry.address)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-mono text-xs text-muted transition-colors hover:text-brass"
+                    >
+                      {shorten(entry.address)}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-10 text-[11px] font-semibold uppercase tracking-[0.24em] text-faint">Depended on</p>
+        <div className="mt-4 overflow-x-auto rounded-card border border-line bg-panel">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-line text-left text-[11px] uppercase tracking-[0.18em] text-faint">

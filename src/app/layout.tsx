@@ -17,7 +17,7 @@ const display = Newsreader({
 export const metadata: Metadata = {
   title: "Equis - Margin credit against tokenized stocks on X Layer",
   description:
-    "Deposit tokenized shares as collateral and borrow USD₮0 on X Layer without selling. Chainlink-priced, EIP-7702 agent guards.",
+    "Deposit tokenized shares as collateral and borrow USD₮0 on X Layer without selling. RedStone-priced, EIP-7702 agent guards.",
 };
 
 // viewport-fit=cover lets the Telegram Mini App webview use the full screen on notched phones.

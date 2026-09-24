@@ -16,7 +16,7 @@ const STEPS = [
   },
   {
     title: "The position defends itself",
-    body: "When the health factor slips, the agent repays from your USD₮0 or adds collateral within its mandate - no approval round-trip at 3am. If it still falls through the threshold, anyone may liquidate at the Chainlink-verified price.",
+    body: "When the health factor slips, the agent repays from your USD₮0 or adds collateral within its mandate - no approval round-trip at 3am. If it still falls through the threshold, anyone may liquidate at the last signed price the oracle verified.",
   },
 ];
 

@@ -3,11 +3,11 @@ import { SectionHeading } from "@/components/ui";
 const FEATURES = [
   {
     title: "Priced by proof, not by us",
-    body: "Every stock price enters the vault as a Chainlink Data Streams report, signature-checked onchain in the same transaction that spends it. The vault values a wrapper at price × share multiplier, and refuses a price that is stale, mid corporate action, or taken while the sequencer was down.",
+    body: "Every stock price enters the vault as a RedStone data package, signed by three of five known signers and checked onchain in the same transaction that spends it. A wrapper is valued at the share price times its live multiplier, and a price is refused when it is stale or taken while the sequencer was down.",
   },
   {
     title: "Market hours are part of the risk model",
-    body: "US equities stop trading; crypto collateral does not. Equis reads Chainlink's market-status flag: while a market is closed you cannot borrow more or withdraw against that stock, but liquidations still clear at the last verified print.",
+    body: "US equities stop trading; crypto collateral does not. Equis tracks how fresh each signed price is: once a feed stops publishing you cannot borrow more or withdraw against that stock, but liquidations still clear at the last verified print. The feeds run 24/5, so the overnight session stays open.",
   },
   {
     title: "Agent keys that cannot run away",
