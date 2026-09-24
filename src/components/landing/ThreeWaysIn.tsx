@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ExhibitCaption } from "@/components/brand/Motif";
 import { IconAgent, IconOverview, IconTelegram } from "@/components/icons";
 import { Pill, SectionHeading } from "@/components/ui";
-import { cn } from "@/lib/cn";
+import { OKX_TX_URL } from "@/lib/contracts";
 
 /*
  * Three ways in: the dashboard, the Telegram bot and the MCP server are three front ends over one
@@ -78,11 +78,14 @@ const TOOLS: ReadonlyArray<{ name: string; kind: "read" | "unsigned tx" }> = [
   { name: "equis_build_transaction", kind: "unsigned tx" },
 ];
 
-const PROOF: ReadonlyArray<{ label: string; value: string; alarm?: boolean }> = [
-  { label: "Built by", value: "equis_build_transaction" },
-  { label: "Simulated against", value: "EquisMarginVault, X Layer mainnet" },
-  { label: "Result", value: "revert InsufficientCash()", alarm: true },
-  { label: "Raised by", value: "EquisLendingPool, not the oracle" },
+/** A real borrow on X Layer mainnet, not a testnet and not a simulation. */
+const BORROW_TX = "0xb896faa0e4965cb5bf4d970b5f7ced9f5eccc6a5ad9083b31bc7c7d662c0b5ee";
+
+const PROOF: ReadonlyArray<{ label: string; value: string; href?: string }> = [
+  { label: "Transaction", value: "0xb896faa0…62c0b5ee", href: `${OKX_TX_URL}${BORROW_TX}` },
+  { label: "Block", value: "71,513,642" },
+  { label: "Carried", value: "1,700 bytes, signed by 3 of 5" },
+  { label: "Cost", value: "0.0000136 OKB" },
 ];
 
 export function ThreeWaysIn() {
@@ -189,8 +192,8 @@ export function ThreeWaysIn() {
 
             <div className="bg-panel p-6 sm:p-8">
               <div className="flex flex-wrap items-center gap-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brass">What we checked</p>
-                <Pill tone="good">Price verified onchain</Pill>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brass">What actually happened</p>
+                <Pill tone="good">Borrowed on mainnet</Pill>
               </div>
 
               <dl className="mt-5 divide-y divide-line overflow-hidden rounded-lg border border-line bg-ink">
@@ -200,37 +203,44 @@ export function ThreeWaysIn() {
                     className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
                   >
                     <dt className="text-[11px] uppercase tracking-[0.18em] text-faint">{row.label}</dt>
-                    <dd
-                      className={cn(
-                        "break-all font-mono text-xs leading-relaxed sm:text-right",
-                        row.alarm ? "text-alarm" : "text-muted",
+                    <dd className="break-all font-mono text-xs leading-relaxed text-muted sm:text-right">
+                      {row.href ? (
+                        <a
+                          href={row.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-brass transition-colors hover:text-brass-bright"
+                        >
+                          {row.value}
+                        </a>
+                      ) : (
+                        row.value
                       )}
-                    >
-                      {row.value}
                     </dd>
                   </div>
                 ))}
               </dl>
 
               <p className="mt-5 text-sm leading-relaxed text-muted">
-                We took the calldata the tool produced and simulated it against the deployed vault. It reverted from
-                the lending pool, which had no idle USD₮0 to hand over at the time. That is the good outcome:{" "}
-                <code className="font-mono text-[0.8125rem] text-text">borrow()</code> runs{" "}
-                <code className="font-mono text-[0.8125rem] text-text">_updatePrices(priceReports)</code> before it
-                touches the pool, so reaching the pool at all means RedStone&apos;s three-of-five signature check had
-                passed onchain and the oracle had priced the collateral.
+                Collateral deposited, then 4 USD₮0 drawn against it in a single send. The calldata carried a RedStone
+                package signed by three of five signers, and{" "}
+                <code className="font-mono text-[0.8125rem] text-text">borrow()</code> verified it onchain through{" "}
+                <code className="font-mono text-[0.8125rem] text-text">_updatePrices(priceReports)</code> before the
+                pool paid out. No separate oracle update, no second signature, and it cost a sixth of a cent.
               </p>
 
               <p className="mt-4 text-[0.8125rem] leading-relaxed text-faint">
-                Liquidity is the one thing a hackathon weekend cannot fake. Everything upstream of it is live: supply
-                USD₮0 into the pool and the same transaction clears.
+                That borrow was signed in the dashboard.{" "}
+                <code className="font-mono text-[0.75rem] text-muted">equis_build_transaction</code> emits the same
+                call - same selector, the same 1,700 bytes - and simulates clean against the live vault, so an agent
+                reaches the chain by exactly the route a person does.
               </p>
             </div>
           </div>
 
           <ExhibitCaption label="Exhibit B">
-            A borrow an agent built, simulated against the live vault. The revert is the proof: the price cleared
-            onchain before the pool was ever reached.
+            A real borrow against tokenized NVIDIA on X Layer mainnet, priced by a signature the chain checked
+            itself. Open it on the explorer and read the calldata.
           </ExhibitCaption>
         </figure>
       </div>
