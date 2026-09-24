@@ -1,0 +1,8 @@
+# Caddy gets a certificate automatically, which Telegram requires before it will open a Mini App.
+#   sudo apt install caddy
+#   sudo cp deploy/Caddyfile /etc/caddy/Caddyfile   (edit the domain first)
+#   sudo systemctl reload caddy
+equis.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}

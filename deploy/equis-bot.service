@@ -1,0 +1,29 @@
+# @EquisBot as a managed service.
+#   sudo cp deploy/equis-bot.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now equis-bot
+#   journalctl -u equis-bot -f
+[Unit]
+Description=Equis Telegram bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=equis
+WorkingDirectory=/opt/equis
+ExecStart=/usr/bin/node scripts/telegram-bot.ts
+Restart=always
+RestartSec=5
+# The token lives here, readable only by the service user.
+EnvironmentFile=/opt/equis/.env.local
+StandardOutput=journal
+StandardError=journal
+# The bot only reads the chain and talks to Telegram; it holds no keys and signs nothing.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/equis/scripts
+
+[Install]
+WantedBy=multi-user.target

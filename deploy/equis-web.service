@@ -1,0 +1,22 @@
+# The dashboard, if you would rather host it yourself than on Vercel.
+# Build first: npm ci && npm run build
+[Unit]
+Description=Equis dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=equis
+WorkingDirectory=/opt/equis
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+EnvironmentFile=/opt/equis/.env.local
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
