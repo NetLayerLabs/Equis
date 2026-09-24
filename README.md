@@ -48,8 +48,8 @@ Pool: 250,000 USD₮0 supply cap, 10% reserve factor, 0% base rate rising to 8% 
 **Live:** deposit and withdraw collateral, borrow and repay USD₮0, supply and withdraw as a lender,
 liquidation, onchain price verification, EIP-7702 batching, and a dashboard reading all of it from the chain.
 
-**Not built, on purpose:** the Telegram bot and the yield router described in the original project spec, and
-SPY/QQQ collateral. Saying so beats overclaiming.
+**Not built, on purpose:** the yield router described in the original project spec, and SPY/QQQ collateral
+(no public price feed exists for them). Saying so beats overclaiming.
 
 **The rule this codebase follows:** no mock data anywhere. Contracts are tested against forked mainnet state
 with real tokens, and the interface shows a live reading or says it cannot get one. It never invents a number.
@@ -104,6 +104,28 @@ Your account points at `EquisSessionDelegate` and grants an agent a key that:
 
 This is enforced in contract code, not in the interface. Vault actions take no recipient argument, so a key
 cannot redirect funds even if it is allowlisted.
+
+## Telegram
+
+`@EquisBot` answers from the same chain reads as the dashboard, so the two cannot disagree.
+
+| Command | Does |
+| --- | --- |
+| `/markets` | Live collateral prices, signed by RedStone |
+| `/pool` | Supplied, borrowed, utilisation, supply and borrow APY |
+| `/position <address>` | Collateral, debt, borrow power and health factor |
+| `/watch <address>` | Messages you when that position's health factor falls below 1.15, and again when it recovers |
+
+Run it with a token from @BotFather:
+
+```bash
+echo "TELEGRAM_BOT_TOKEN=..." >> .env.local
+node scripts/telegram-bot.ts --check   # confirm the token
+node scripts/telegram-bot.ts           # run it
+```
+
+Set `EQUIS_APP_URL` to an https address and the bot adds a button that opens the dashboard as a Telegram
+Mini App. The interface already adapts to Telegram's viewport and theme.
 
 ## Quickstart
 

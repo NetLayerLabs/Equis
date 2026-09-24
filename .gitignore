@@ -19,3 +19,4 @@ npm-debug.log*
 
 # python
 __pycache__/
+scripts/.telegram-watchlist.json
