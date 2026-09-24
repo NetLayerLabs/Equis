@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "equis": {
+      "command": "node",
+      "args": ["scripts/mcp-server.ts"]
+    }
+  }
+}
