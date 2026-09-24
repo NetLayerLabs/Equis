@@ -18,7 +18,8 @@ import {AggregatorV3Interface} from "./interfaces/chainlink/AggregatorV3Interfac
 ///         Every read also checks the X Layer sequencer uptime feed.
 /// @dev RedStone data rides at the END of the calldata of the call into this contract, so prices must be
 ///      refreshed by calling `updatePricesFor` directly with the payload appended — the vault cannot relay it.
-///      Batch it with the vault call (EIP-5792) or send it as the preceding transaction.
+///      Callers may also relay a payload through `updatePrices`, which re-enters this contract so the vault
+///      can refresh prices inside a single borrow or liquidate transaction.
 contract RedStonePriceOracle is IPriceOracle, PrimaryProdDataServiceConsumerBase, Ownable2Step {
     uint256 internal constant WAD = 1e18;
     /// @dev RedStone numeric values carry 8 decimals.
@@ -62,7 +63,6 @@ contract RedStonePriceOracle is IPriceOracle, PrimaryProdDataServiceConsumerBase
     error PriceUnavailable(address asset);
     error StalePrice(address asset);
     error InvalidPrice(address asset);
-    error ReportsNotAccepted();
     error SequencerDown();
     error SequencerGracePeriod();
 
@@ -102,10 +102,22 @@ contract RedStonePriceOracle is IPriceOracle, PrimaryProdDataServiceConsumerBase
     }
 
     /// @inheritdoc IPriceOracle
-    /// @dev RedStone prices cannot be relayed through another contract, so the vault must pass no reports.
-    ///      Prices are refreshed by calling `updatePricesFor` with the payload appended.
-    function updatePrices(bytes[] calldata reports) external pure {
-        if (reports.length != 0) revert ReportsNotAccepted();
+    /// @notice Refreshes prices from reports relayed by the vault, so borrowing stays a single transaction.
+    /// @dev Each report is `abi.encode(address[] assets, bytes redstonePayload)`. RedStone reads its payload
+    ///      from the calldata of the call *into this contract*, and the vault's nested call would drop it —
+    ///      so the oracle re-enters itself with the payload appended, where the consumer can find it.
+    function updatePrices(bytes[] calldata reports) external {
+        for (uint256 i; i < reports.length; ++i) {
+            (address[] memory assets, bytes memory payload) = abi.decode(reports[i], (address[], bytes));
+            (bool ok, bytes memory returned) =
+                address(this).call(abi.encodePacked(abi.encodeCall(this.updatePricesFor, (assets)), payload));
+            if (!ok) {
+                // Surface the consumer's own error (bad signature, stale timestamp) rather than masking it.
+                assembly {
+                    revert(add(returned, 32), mload(returned))
+                }
+            }
+        }
     }
 
     // ---------------------------------------------------------------------------------------------

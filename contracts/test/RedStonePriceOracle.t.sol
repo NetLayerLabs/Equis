@@ -96,10 +96,27 @@ contract RedStonePriceOracleTest is Test {
         assertFalse(ok, "a tampered payload must not verify");
     }
 
-    function test_VaultStyleReportsAreRejected() public {
+    function test_VaultRelayedReportPricesStocks() public {
+        // How the vault refreshes prices mid-borrow: it relays the payload, and the oracle re-enters itself
+        // so RedStone still finds the payload in calldata. This keeps borrowing a single transaction.
         bytes[] memory reports = new bytes[](1);
-        reports[0] = hex"1234";
-        vm.expectRevert(RedStonePriceOracle.ReportsNotAccepted.selector);
+        reports[0] = abi.encode(assets, payload);
+
+        oracle.updatePrices(reports);
+
+        (uint256 price, bool marketOpen) = oracle.getPrice(assets[0]);
+        assertGt(price, 1e18);
+        assertTrue(marketOpen);
+    }
+
+    function test_VaultRelayedTamperedReportReverts() public {
+        bytes memory tampered = payload;
+        tampered[64] = bytes1(uint8(tampered[64]) ^ 0xff);
+        bytes[] memory reports = new bytes[](1);
+        reports[0] = abi.encode(assets, tampered);
+
+        // The consumer's own error must surface through the relay rather than being swallowed.
+        vm.expectRevert();
         oracle.updatePrices(reports);
     }
 
