@@ -1,0 +1,28 @@
+{
+  "name": "equis-video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "clips": "node scripts/clips-manifest.mjs",
+    "prestudio": "node scripts/clips-manifest.mjs && node scripts/vo-durations.mjs",
+    "studio": "remotion studio src/index.ts",
+    "capture": "node scripts/capture.mjs",
+    "vo": "node vo-gen.js && node scripts/vo-durations.mjs",
+    "vo:durations": "node scripts/vo-durations.mjs",
+    "prerender": "node scripts/clips-manifest.mjs && node scripts/vo-durations.mjs",
+    "render": "remotion render src/index.ts Equis out/equis-demo.mp4 --browser-executable \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --codec h264 --crf 14 --x264-preset slow --image-format png --pixel-format yuv420p --color-space bt709 --audio-codec aac --audio-bitrate 320k --overwrite && node scripts/finish.mjs out/equis-demo.mp4",
+    "prerender:4k": "node scripts/clips-manifest.mjs && node scripts/vo-durations.mjs",
+    "render:4k": "remotion render src/index.ts Equis out/equis-demo-4k.mp4 --browser-executable \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --codec h264 --scale 2 --crf 14 --x264-preset slow --image-format png --pixel-format yuv420p --color-space bt709 --audio-codec aac --audio-bitrate 320k --concurrency 6 --overwrite && node scripts/finish.mjs out/equis-demo-4k.mp4",
+    "thumb": "remotion still src/index.ts Equis out/equis-demo-thumb.png --frame=60 --image-format png --overwrite --browser-executable \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" && remotion still src/index.ts Equis out/.thumb-4k.png --frame=60 --scale 2 --image-format png --overwrite --browser-executable \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" && ffmpeg -v error -y -i out/equis-demo-thumb.png -vf scale=1280:720 -q:v 2 out/equis-demo-thumb.jpg && ffmpeg -v error -y -i out/.thumb-4k.png -q:v 3 out/equis-demo-thumb-4k.jpg && rm -f out/.thumb-4k.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.376",
+    "@remotion/google-fonts": "^4.0.376",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.376"
+  },
+  "devDependencies": {
+    "playwright": "1.58"
+  }
+}
