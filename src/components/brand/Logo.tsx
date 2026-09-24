@@ -1,26 +1,36 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 /*
- * The Equis mark: an engraved seal whose three rules are the protocol's ledger - collateral above,
- * credit below, the brass line between them the loan. Drawn, not an image file, so it stays crisp
- * at any size and needs no asset pipeline.
+ * The Equis identity. Both files carry a near-black ground that matches the app's own surface, so they sit
+ * flush on any panel without a visible plate.
+ *   header  the full lockup, used in the landing nav, the footer and the expanded sidebar
+ *   mark    the square symbol, used where the lockup will not fit (collapsed rail, favicon)
  */
 export function EquisMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 40 40" className={className} fill="none" aria-hidden="true">
-      <rect x="0.75" y="0.75" width="38.5" height="38.5" rx="9" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="4.5" y="4.5" width="31" height="31" rx="6.5" stroke="currentColor" strokeOpacity="0.35" />
-      <path d="M12 14.5h16M12 20h11" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" />
-      <path d="M12 25.5h16" stroke="#C9A227" strokeWidth="2.25" strokeLinecap="round" />
-    </svg>
+    <Image
+      src="/equis-mark.png"
+      alt=""
+      width={512}
+      height={512}
+      aria-hidden="true"
+      className={cn("size-8 rounded-lg", className)}
+    />
   );
 }
 
 export function Logo({ className, markClassName }: { className?: string; markClassName?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <EquisMark className={cn("size-8 text-text", markClassName)} />
-      <span className="font-display text-[1.35rem] leading-none tracking-[0.14em] text-text">EQUIS</span>
+    <span className={cn("inline-flex items-center", className)}>
+      <Image
+        src="/equis-header.png"
+        alt="Equis"
+        width={900}
+        height={225}
+        priority
+        className={cn("h-9 w-auto", markClassName)}
+      />
     </span>
   );
 }

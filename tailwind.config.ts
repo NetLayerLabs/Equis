@@ -40,7 +40,7 @@ const config: Config = {
         "pulse-dot": "pulse-dot 1.8s ease-in-out infinite",
         // Continuous, unhurried motion for the hero figures.
         float: "float 9s ease-in-out infinite",
-        "spin-slow": "spin-slow 120s linear infinite",
+        "spin-slow": "spin-slow 45s linear infinite",
       },
       keyframes: {
         rise: {
@@ -51,9 +51,12 @@ const config: Config = {
           "0%,100%": { opacity: "1", transform: "scale(1)" },
           "50%": { opacity: "0.4", transform: "scale(0.82)" },
         },
+        // Three stops rather than two, on two axes, so the drift reads as floating paper and never
+        // looks like a single repeated bounce.
         float: {
-          "0%,100%": { transform: "translate3d(0, 0, 0)" },
-          "50%": { transform: "translate3d(0, -10px, 0)" },
+          "0%,100%": { transform: "translate3d(0, 0, 0) rotate(0deg)" },
+          "33%": { transform: "translate3d(5px, -18px, 0) rotate(0.4deg)" },
+          "66%": { transform: "translate3d(-5px, -9px, 0) rotate(-0.4deg)" },
         },
         "spin-slow": {
           from: { transform: "rotate(0deg)" },

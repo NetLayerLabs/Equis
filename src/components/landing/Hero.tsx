@@ -98,14 +98,14 @@ export function Hero({ facts }: { facts: ChainFacts | null }) {
             className="absolute -inset-x-3 bottom-12 top-6 -z-10 rounded-[1.75rem] border border-line bg-panel/40 sm:-inset-x-5"
           />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] sm:gap-5">
-            <Drift tilt="sm:self-start sm:-rotate-1" rise={0.08} duration={9} phase={0}>
+            <Drift tilt="sm:self-start sm:-rotate-1" rise={0.08} duration={7} phase={0}>
               <CertificateFragment fact={nvidia} />
             </Drift>
             <div className="flex flex-col gap-4 sm:gap-5 sm:pt-8">
-              <Drift tilt="sm:rotate-1" rise={0.3} duration={11} phase={-3.5}>
+              <Drift tilt="sm:rotate-1" rise={0.3} duration={8.5} phase={-2.6}>
                 <CreditFragment usdt0Usd={facts?.usdt0Usd} />
               </Drift>
-              <Drift tilt="sm:-rotate-1" rise={0.45} duration={13} phase={-7}>
+              <Drift tilt="sm:-rotate-1" rise={0.45} duration={10} phase={-5.4}>
                 <GuardFragment />
               </Drift>
             </div>

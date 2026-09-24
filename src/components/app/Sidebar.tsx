@@ -75,9 +75,9 @@ export function Sidebar() {
           {collapsed && !inDrawer ? (
             <EquisMark className="size-8 text-text" />
           ) : (
-            <span className="flex flex-col gap-1">
-              <Logo />
-              <span className="pl-[2.6rem] text-[10px] uppercase tracking-[0.2em] text-faint">Margin credit</span>
+            <span className="flex flex-col gap-1.5">
+              <Logo markClassName="h-8" />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-faint">Margin credit</span>
             </span>
           )}
         </Link>
