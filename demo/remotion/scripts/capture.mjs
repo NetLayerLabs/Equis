@@ -72,6 +72,8 @@ const HAND_RECORDED = {
   earn: 'QuickTime screen recording of /app/earn with a wallet connected, showing the pool at 33% utilisation.',
   mcp: 'Terminal recording: the MCP server running and equis_build_transaction returning unsigned calldata.',
   tests: 'Terminal recording: forge test, 35 passing.',
+  telegram: 'Screen recording of Telegram: /start, then /markets and /position <address>, so the bot is ' +
+    'seen answering rather than described. Optional - the scene draws the two alert bubbles without it.',
 }
 
 // ---------------------------------------------------------------------------------------------

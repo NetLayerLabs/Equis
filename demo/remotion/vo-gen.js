@@ -37,6 +37,9 @@ const SECTIONS = [
   ['07', "A Telegram bot reads the same contracts, and messages you when a health factor slips below one point one five."],
   ['08', "Five contracts on mainnet, verified on Sourcify with an exact match. Thirty-five tests against forked mainnet state. And the README says what is not built, too: no yield router, and no S and P or Nasdaq collateral, because no public price feed exists for them."],
   ['09', "Equis. Credit against tokenized equities on X Layer, priced by a signature the chain checks itself, and reachable by a person or an agent."],
+  // Opens the film. Numbered 10 rather than renumbering the nine sections already recorded; the film
+  // orders scenes itself, and the ids only have to be stable, not sequential.
+  ['10', "Tokenized stocks put real shares onchain. NVIDIA, Apple, Tesla, held in a wallet. But the moment you need dollars, the chain offers exactly one option: sell. You give up the position, and the upside you were holding it for."],
 ]
 
 const only = process.env.VO_ONLY ? process.env.VO_ONLY.replace(/^v/, '') : null

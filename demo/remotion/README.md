@@ -35,13 +35,17 @@ scale factor of 2, so the frames are 3200x1800 and the film can push in without 
 
 **3. Footage that cannot.** Four beats need a human:
 
-| Clip | Why |
-| --- | --- |
-| `explorer.mp4` | The OKX explorer redirects an automated browser to `web3.okx.com/account/login`, so the automated take came back a 404 page. A normal signed-in browser serves it fine. |
-| `dashboard.mp4` | `/app` needs a connected wallet holding the position. Playwright cannot sign. |
-| `earn.mp4` | `/app/earn` likewise, to show the pool at 33% utilisation. |
-| `mcp.mp4` | A terminal running the MCP server and returning `equis_build_transaction`. |
-| `tests.mp4` | A terminal running `forge test`: 35 passing. |
+| Clip | Record | Why it cannot be automated |
+| --- | --- | --- |
+| `explorer.mp4` | 20s | The OKX explorer redirects an automated browser to `web3.okx.com/account/login`, so the automated take came back a 404 page. A signed-in browser serves it fine. |
+| `dashboard.mp4` | 20s | `/app` needs a connected wallet holding the position. Playwright cannot sign. |
+| `earn.mp4` | 5s | `/app/earn` likewise. Only ~3s is used - it is a cut at the end of the scene. |
+| `mcp.mp4` | 40s | A terminal. Run `node scripts/demo-mcp.mjs`, which drives the real server and paces its output for a camera. |
+| `tests.mp4` | 25s | A terminal running `forge test`: 35 passing. |
+| `telegram.mp4` | 10s | Optional. Telegram, showing `/start`, `/markets`, `/position`. Without it the scene draws the two alert bubbles instead. |
+
+Over-length costs nothing - the tail is ignored. Under-length freezes on the last frame rather than
+breaking, so err long.
 
 For `explorer.mp4`, open
 [the borrow transaction](https://web3.okx.com/explorer/x-layer/evm/tx/0xb896faa0e4965cb5bf4d970b5f7ced9f5eccc6a5ad9083b31bc7c7d662c0b5ee)

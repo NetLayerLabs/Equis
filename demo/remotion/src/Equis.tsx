@@ -39,7 +39,6 @@ import {
   Mono,
   PANEL,
   PANEL_SOFT,
-  ProgressRail,
   Reveal,
   Rise,
   SANS,
@@ -89,7 +88,12 @@ const FADE = 12
  */
 const FADE_OVER_WINDOW = 5
 
-const IDS = ['v00', 'v01', 'v02', 'v03', 'v04', 'v05', 'v06', 'v07', 'v08', 'v09'] as const
+/*
+ * Film order, not recording order. v10 was written last and opens the film: a judge who has not been
+ * told what Equis is has no reason to care that a transaction carried 1,700 bytes, so the problem comes
+ * first, the answer second, and the proof third. The ids stay as recorded rather than being renumbered.
+ */
+const IDS = ['v10', 'v02', 'v00', 'v01', 'v03', 'v04', 'v05', 'v06', 'v07', 'v08', 'v09'] as const
 type Id = (typeof IDS)[number]
 
 /**
@@ -109,6 +113,7 @@ const SCRIPT: Record<Id, string> = {
   v07: 'A Telegram bot reads the same contracts, and messages you when a health factor slips below one point one five.',
   v08: 'Five contracts on mainnet, verified on Sourcify with an exact match. Thirty-five tests against forked mainnet state. And the README says what is not built, too: no yield router, and no S and P or Nasdaq collateral, because no public price feed exists for them.',
   v09: 'Equis. Credit against tokenized equities on X Layer, priced by a signature the chain checks itself, and reachable by a person or an agent.',
+  v10: 'Tokenized stocks put real shares onchain. NVIDIA, Apple, Tesla, held in a wallet. But the moment you need dollars, the chain offers exactly one option: sell. You give up the position, and the upside you were holding it for.',
 }
 
 /** This voice reads narration prose at about this rate. */
@@ -1474,13 +1479,24 @@ const S07: React.FC = () => (
       </Chip>
     </div>
     <div style={{ position: 'absolute', left: 980, top: 250, width: 720 }}>
-      <Rise delay={at07(2.8)} distance={14}>
-        <LedgerRule delay={at07(2.8)} width={720} />
-      </Rise>
-      <div style={{ height: 34 }} />
-      <Bubble delay={at07(3.4)} tone="bad" title="Alert" body="Health factor below 1.15 - repay, or top up collateral." />
-      <div style={{ height: 26 }} />
-      <Bubble delay={at07(5.6)} tone="good" title="Recovered" body="Back above 1.25." />
+      {/*
+        * A recording of the bot being used beats a drawing of it, so real footage wins when it exists.
+        * The drawn bubbles stay as the fallback - they carry the same two thresholds, so the scene reads
+        * either way and nothing has to be re-cut if the take never happens.
+        */}
+      {hasClip('telegram') ? (
+        <TerminalFrame clip="telegram" title="Telegram  ·  @EquisAppBot" width={720} delay={at07(2.4)} dur={durOf('v07')} />
+      ) : (
+        <>
+          <Rise delay={at07(2.8)} distance={14}>
+            <LedgerRule delay={at07(2.8)} width={720} />
+          </Rise>
+          <div style={{ height: 34 }} />
+          <Bubble delay={at07(3.4)} tone="bad" title="Alert" body="Health factor below 1.15 - repay, or top up collateral." />
+          <div style={{ height: 26 }} />
+          <Bubble delay={at07(5.6)} tone="good" title="Recovered" body="Back above 1.25." />
+        </>
+      )}
     </div>
   </>
 )
@@ -1622,15 +1638,110 @@ const S09: React.FC = () => (
   </>
 )
 
+/* =================================================================== S10 == */
+/*
+ * The problem, and the first thing anyone sees.
+ *
+ * Deliberately no wordmark, no product and no contract address: three holdings, the thing you need,
+ * and the single move the chain actually offers you. The film earns the right to talk about calldata
+ * only after someone has been told why a loan against these shares would matter.
+ */
+
+const at10 = cue('v10')
+
+const HOLDINGS: ReadonlyArray<{ sym: string; name: string }> = [
+  { sym: 'NVDAx', name: 'NVIDIA' },
+  { sym: 'AAPLx', name: 'Apple' },
+  { sym: 'TSLAx', name: 'Tesla' },
+]
+
+/** A holding, drawn as a certificate: the ticker large, the company under it. */
+const Holding: React.FC<{ sym: string; name: string; delay: number; struck: number }> = ({
+  sym,
+  name,
+  delay,
+  struck,
+}) => (
+  <Rise delay={delay} distance={20} style={{ ...cardStyle, padding: '26px 30px', position: 'relative' }}>
+    <div style={{ fontFamily: MONO, fontSize: 34, color: TEXT, letterSpacing: '-0.01em' }}>{sym}</div>
+    <div style={{ height: 8 }} />
+    <div style={{ fontFamily: SANS, fontSize: 21, color: FAINT }}>{name}</div>
+    {/* The line that takes the position away, drawn rather than said. */}
+    <div
+      style={{
+        position: 'absolute',
+        left: 30,
+        right: 30,
+        top: '52%',
+        height: 2,
+        background: ALARM,
+        transformOrigin: 'left center',
+        transform: `scaleX(${struck})`,
+        opacity: 0.85,
+      }}
+    />
+  </Rise>
+)
+
+const S10: React.FC = () => {
+  const f = useCurrentFrame()
+  const struck = easeInOut(interpolate(f, [at10(7.0), at10(8.6)], [0, 1], CLAMP))
+  return (
+    <>
+      <Backdrop rosette="right" />
+
+      <div style={{ position: 'absolute', left: 96, top: 230, width: 820 }}>
+        <Eyebrow delay={4}>Tokenized equities</Eyebrow>
+        <div style={{ height: 22 }} />
+        <Headline lines={['Your shares are onchain.', { em: 'There is one way out.' }]} delay={10} size={72} />
+        <div style={{ height: 36 }} />
+        <Body delay={at10(3.4)} size={29} width={760}>
+          Real equity, held in a wallet. But the moment you need dollars, the chain offers exactly one
+          move.
+        </Body>
+      </div>
+
+      <div style={{ position: 'absolute', left: 1080, top: 214, width: 730 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {HOLDINGS.map((h, i) => (
+            <Holding key={h.sym} sym={h.sym} name={h.name} delay={at10(0.8) + i * 9} struck={struck} />
+          ))}
+        </div>
+
+        <div style={{ height: 34 }} />
+        <Rise delay={at10(7.4)} distance={14}>
+          <div
+            style={{
+              fontFamily: SANS,
+              fontSize: 26,
+              fontWeight: 600,
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              color: ALARM,
+            }}
+          >
+            Sell
+          </div>
+          <div style={{ height: 14 }} />
+          <div style={{ fontFamily: SANS, fontSize: 25, lineHeight: 1.45, color: MUTED }}>
+            The position is gone, and so is the upside you were holding it for.
+          </div>
+        </Rise>
+      </div>
+    </>
+  )
+}
+
 /* ============================================================== composition */
 
-const BODIES: React.FC[] = [S00, S01, S02, S03, S04, S05, S06, S07, S08, S09]
+const BODIES: React.FC[] = [S10, S02, S00, S01, S03, S04, S05, S06, S07, S08, S09]
 
 /**
  * Which scenes carry a window of dense footage at the join. Two of those in a row
  * get the short dissolve; everything else gets the long one.
  */
-const WINDOWED = [true, false, true, true, true, true, true, false, true, false]
+//                 v10    v02   v00   v01    v03   v04   v05   v06   v07   v08   v09
+const WINDOWED = [false, true, true, false, true, true, true, true, true, true, false]
 const fadeInto = (i: number) => (i > 0 && WINDOWED[i] && WINDOWED[i - 1] ? FADE_OVER_WINDOW : FADE)
 
 /** Fade every scene in over the one before, so cuts never snap. */
@@ -1638,21 +1749,6 @@ const Scene: React.FC<{ first: boolean; fade: number; children: React.ReactNode 
   const f = useCurrentFrame()
   const o = first ? 1 : easeInOut(interpolate(f, [0, fade], [0, 1], CLAMP))
   return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>
-}
-
-/**
- * The rail draws itself in as the cold open leaves: the first frames of the film
- * are its thumbnail, and a few bright pixels of brass in the corner of that frame
- * read as a scratch on the plate.
- */
-const Rail: React.FC = () => {
-  const f = useCurrentFrame()
-  const o = interpolate(f, [STARTS[1] - 30, STARTS[1]], [0, 1], CLAMP)
-  return (
-    <AbsoluteFill style={{ opacity: o }}>
-      <ProgressRail total={EQUIS_DURATION} color={BRASS} />
-    </AbsoluteFill>
-  )
 }
 
 export const Equis: React.FC = () => (
@@ -1680,6 +1776,5 @@ export const Equis: React.FC = () => (
         </Sequence>
       )
     })}
-    <Rail />
   </AbsoluteFill>
 )
