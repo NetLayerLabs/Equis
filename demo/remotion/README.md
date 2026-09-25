@@ -42,7 +42,7 @@ scale factor of 2, so the frames are 3200x1800 and the film can push in without 
 | `earn.mp4` | 5s | `/app/earn` likewise. Only ~3s is used - it is a cut at the end of the scene. |
 | `mcp.mp4` | 40s | A terminal. Run `node scripts/demo-mcp.mjs`, which drives the real server and paces its output for a camera. |
 | `tests.mp4` | 25s | A terminal running `forge test`: 35 passing. |
-| `telegram.mp4` | 10s | Optional. Telegram, showing `/start`, `/markets`, `/position`. Without it the scene draws the two alert bubbles instead. |
+| `telegram.mp4` | 20s | Telegram, showing `/start`, `/markets`, `/position`. Optional - without it the scene draws the two alert bubbles instead. |
 
 Over-length costs nothing - the tail is ignored. Under-length freezes on the last frame rather than
 breaking, so err long.
