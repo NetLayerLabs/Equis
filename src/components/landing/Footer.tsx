@@ -32,7 +32,7 @@ const COLUMNS: ReadonlyArray<{ heading: string; links: ReadonlyArray<{ label: st
 ];
 
 const SOCIALS = [
-  { label: "Equis on X", href: "https://x.com/EquisHQ", Icon: IconX },
+  { label: "@encrypt_wizard on X", href: "https://x.com/encrypt_wizard", Icon: IconX },
   { label: "@EquisAppBot on Telegram", href: "https://t.me/EquisAppBot", Icon: IconTelegram },
 ];
 
