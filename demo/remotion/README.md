@@ -60,8 +60,13 @@ Record each at 1600x900 or larger, save to `public/clips/<name>.mp4`, then `npm 
 ```bash
 npm run render          # 1080p to out/equis-demo.mp4
 npm run render:4k       # the same cut at 2x
-npm run thumb           # a poster frame
+npm run thumb           # the poster frame, 1080p png and a 1280x720 jpg for YouTube
 ```
+
+The thumbnail is its own composition (`src/Thumbnail.tsx`), not a frame lifted out of the film. A still
+from the film carries the film's type sizes, which are set to be read at full width with a voice
+explaining them; shrunk into a list of other submissions that reads as grey noise. The poster states one
+claim large enough to survive the shrink and backs it with a chain id and a live health factor.
 
 ## Rules the film follows
 

@@ -1213,7 +1213,8 @@ const S05: React.FC = () => (
         title="equis-mcp  ·  equis_build_transaction"
         width={968}
         delay={at05(0.6)}
-        startFrom={0.5}
+        // The take opens on a login banner and a bare prompt; the server answers from about here.
+        startFrom={7}
         dur={durOf('v05')}
       />
       <div style={{ height: 30 }} />
@@ -1460,6 +1461,49 @@ const Bubble: React.FC<{ delay: number; tone: 'bad' | 'good'; title: string; bod
   )
 }
 
+/**
+ * The bot take is filmed on a phone, so it gets a phone: portrait, rounded hard, with the clip cropped
+ * to the glass rather than letterboxed into a window it was never shot for.
+ */
+const PhoneFrame: React.FC<{ clip: string; width: number; delay: number; dur: number }> = ({
+  clip,
+  width,
+  delay,
+  dur,
+}) => {
+  const f = useCurrentFrame()
+  const enter = easeOut(interpolate(f, [delay, delay + 26], [0, 1], CLAMP))
+  const push = interpolate(f, [0, dur], [1, 1.02], CLAMP)
+  const height = Math.round((width * 1920) / 886)
+  return (
+    <div
+      style={{
+        width,
+        height,
+        opacity: enter,
+        transform: `translateY(${(1 - enter) * 26}px) scale(${push})`,
+        transformOrigin: 'center center',
+        borderRadius: 34,
+        overflow: 'hidden',
+        border: `1px solid ${LINE_STRONG}`,
+        background: INK_DEEP,
+        boxShadow: '0 2px 6px rgb(0 0 0 / 0.5), 0 28px 60px -24px rgb(0 0 0 / 0.9)',
+      }}
+    >
+      {hasClip(clip) ? (
+        <OffthreadVideo
+          src={staticFile(`clips/${clip}.mp4`)}
+          startFrom={0}
+          muted
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      ) : (
+        <Missing name={clip} />
+      )}
+    </div>
+  )
+}
+
 const S07: React.FC = () => (
   <>
     <Backdrop rosette="right" />
@@ -1485,7 +1529,9 @@ const S07: React.FC = () => (
         * either way and nothing has to be re-cut if the take never happens.
         */}
       {hasClip('telegram') ? (
-        <TerminalFrame clip="telegram" title="Telegram  ·  @EquisAppBot" width={720} delay={at07(2.4)} dur={durOf('v07')} />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <PhoneFrame clip="telegram" width={352} delay={at07(2.0)} dur={durOf('v07')} />
+        </div>
       ) : (
         <>
           <Rise delay={at07(2.8)} distance={14}>
@@ -1544,7 +1590,8 @@ const S08: React.FC = () => (
     </div>
 
     <div style={{ position: 'absolute', left: 1052, top: 128, width: 772 }}>
-      <TerminalFrame clip="tests" title="forge test  ·  --fork-url xlayer" width={772} delay={at08(4.0)} dur={durOf('v08')} />
+      {/* Offset so the 14s on screen ends on "35 tests passed" rather than on the compile step. */}
+      <TerminalFrame clip="tests" title="forge test  ·  --fork-url xlayer" width={772} startFrom={5} delay={at08(4.0)} dur={durOf('v08')} />
       <div style={{ height: 24 }} />
       <Chip tone="good" delay={at08(5.2)} size={22} dot>
         35 passing against forked mainnet state
