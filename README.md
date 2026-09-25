@@ -7,6 +7,9 @@ collateral, up to a cap, until an expiry - never withdraw, never borrow.
 
 Built for OKX Dev Day 2026 - Build a Market track, Remote Build route. Live on X Layer mainnet.
 
+**[Watch the 3-minute demo](https://youtu.be/RUDtDkfAJtE)** · **[Open the app](https://tryequis.vercel.app)** ·
+**[The borrow, onchain](https://web3.okx.com/explorer/x-layer/evm/tx/0xb896faa0e4965cb5bf4d970b5f7ced9f5eccc6a5ad9083b31bc7c7d662c0b5ee)**
+
 ## Live on X Layer mainnet (chain 196)
 
 Deployed 24 September 2026. Source is verified on Sourcify with an exact match on both creation and runtime
